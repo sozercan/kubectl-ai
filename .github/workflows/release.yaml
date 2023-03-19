@@ -1,0 +1,32 @@
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  create-release:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # fetch full history for goreleaser changelog
+
+      - uses: actions/setup-go@v3.5.0
+        with:
+          go-version: "1.20"
+
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v4.2.0
+        with:
+          version: latest
+          args: release --clean --config deploy/.goreleaser.yaml
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+
+      - name: Update new community-images version in krew-index
+        uses: rajatjindal/krew-release-bot@v0.0.43
+        with:
+          krew_template_file: deploy/krew.yaml

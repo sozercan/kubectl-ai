@@ -1,0 +1,44 @@
+project_name: kubectl-ai
+release:
+  github:
+    name: kubectl-ai
+builds:
+  - id: kubectl-ai
+    goos:
+    - linux
+    - windows
+    - darwin
+    goarch:
+    - amd64
+    - "386"
+    - arm64
+    env:
+      - CGO_ENABLED=0
+      - GO111MODULE=on
+    main: main.go
+    ldflags: -s -w
+      -X github.com/kubernetes-sigs/community-images/pkg/version.version={{.Version}}
+      -X github.com/kubernetes-sigs/community-images/pkg/version.gitSHA={{.Commit}}
+      -X github.com/kubernetes-sigs/community-images/pkg/version.buildTime={{.Date}}
+      -extldflags "-static"
+    flags: -tags netgo -installsuffix netgo
+    binary: community-images
+    hooks: {}
+archives:
+  - id: community-images
+    builds:
+      - community-images
+    format: tar.gz
+    format_overrides:
+      - goos: windows
+        format: zip
+    name_template: "{{ .Binary }}_{{ .Os }}_{{ .Arch }}"
+    files:
+      - licence*
+      - LICENCE*
+      - license*
+      - LICENSE*
+      - readme*
+      - README*
+      - changelog*
+      - CHANGELOG*
