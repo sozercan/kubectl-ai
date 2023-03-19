@@ -1,0 +1,38 @@
+project_name: kubectl-ai
+release:
+  github:
+    owner: sozercan
+    name: kubectl-ai
+builds:
+  - id: kubectl-ai
+    goos:
+    - linux
+    - darwin
+    goarch:
+    - amd64
+    - arm64
+    env:
+      - CGO_ENABLED=0
+      - GO111MODULE=on
+    ldflags: -s -w
+      -X github.com/sozercan/kubectl-ai/pkg/version.version={{.Version}}
+      -X github.com/sozercan/kubectl-ai/pkg/version.gitSHA={{.Commit}}
+      -X github.com/sozercan/kubectl-ai/pkg/version.buildTime={{.Date}}
+      -extldflags "-static"
+    flags: -tags netgo -installsuffix netgo
+    binary: kubectl-ai
+    hooks: {}
+
+archives:
+  - id: kubectl-ai
+    builds:
+      - kubectl-ai
+    format: tar.gz
+    format_overrides:
+      - goos: windows
+        format: zip
+    name_template: "{{ .Binary }}_{{ .Os }}_{{ .Arch }}"
+
+checksum:
+  name_template: "{{ .ProjectName }}_checksums.txt"
+  algorithm: sha256
