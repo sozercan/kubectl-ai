@@ -92,8 +92,10 @@ spec:
         app: nginx
     spec:
       containers:
-        - name: nginx
-          image: nginx
+      - name: nginx
+        image: nginx:1.7.9
+        ports:
+        - containerPort: 80
 EOF
 Use the arrow keys to navigate: ↓ ↑ → ←
 ? Would you like to apply this? [Apply/Don't Apply]:
@@ -119,10 +121,6 @@ spec:
   - port: 80
     targetPort: 80
   type: LoadBalancer
-Use the arrow keys to navigate: ↓ ↑ → ←
-? Would you like to apply this? [Apply/Don't Apply]:
-  ▸ Apply
-    Don't Apply
 ```
 
 Multiple objects:
