@@ -45,8 +45,7 @@ Creating objects with specific values:
 
 ```shell
 $ kubectl ai "create an nginx deployment with 3 replicas"
-✨ Attempting to run the following command::
-cat <<EOF | kubectl apply -f -
+✨ Attempting to apply the following manifest:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -73,8 +72,7 @@ EOF
 
 ```shell
 $ kubectl ai "scale nginx-deployment to 5 replicas"
-✨ Attempting to run the following command::
-cat <<EOF | kubectl apply -f -
+✨ Attempting to apply the following manifest:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -99,8 +97,7 @@ Optional `--require-confirmation` flag:
 
 ```shell
 $ kubectl ai "create a service with type LoadBalancer with selector as 'app:nginx'" --require-confirmation
-✨ Attempting to run the following command:
-cat <<EOF | kubectl apply -f -
+✨ Attempting to apply the following manifest:
 apiVersion: v1
 kind: Service
 metadata:
@@ -112,7 +109,6 @@ spec:
   - port: 80
     targetPort: 80
   type: LoadBalancer
-EOF
 Use the arrow keys to navigate: ↓ ↑ → ←
 ? Would you like to apply this? [Yes/No]:
   ▸ Yes
@@ -123,8 +119,7 @@ Multiple objects:
 
 ```shell
 $ kubectl ai "create a foo namespace then create nginx pod in that namespace"
-✨ Attempting to run the following command:
-cat <<EOF | kubectl apply -f -
+✨ Attempting to apply the following manifest:
 apiVersion: v1
 kind: Namespace
 metadata:
