@@ -22,7 +22,7 @@ var (
 	openAIDeploymentName = flag.String("openai-deployment-name", env.GetOr("OPENAI_DEPLOYMENT_NAME", env.String, "text-davinci-003"), "The deployment name used for the model in OpenAI service.")
 	openAIAPIKey         = flag.String("openai-api-key", env.GetOr("OPENAI_API_KEY", env.String, ""), "The API key for the OpenAI service. This is required.")
 	azureOpenAIEndpoint  = flag.String("azure-openai-endpoint", env.GetOr("AZURE_OPENAI_ENDPOINT", env.String, ""), "The endpoint for Azure OpenAI service. If provided, Azure OpenAI service will be used instead of OpenAI service.")
-	requireConfirmation  = flag.Bool("require-confirmation", env.GetOr("REQUIRE_CONFIRMATION", strconv.ParseBool, false), "Whether to require confirmation before executing the command. Defaults to false.")
+	requireConfirmation  = flag.Bool("require-confirmation", env.GetOr("REQUIRE_CONFIRMATION", strconv.ParseBool, true), "Whether to require confirmation before executing the command. Defaults to true.")
 	temperature          = flag.Float64("temperature", env.GetOr("TEMPERATURE", env.WithBitSize(strconv.ParseFloat, 64), 0.0), "The temperature to use for the model. Range is between 0 and 1. Set closer to 0 if your want output to be more deterministic but less creative. Defaults to 0.0.")
 )
 
@@ -87,7 +87,7 @@ func run(args []string) error {
 	text := fmt.Sprintf("✨ Attempting to apply the following manifest: %s", completion)
 	fmt.Println(text)
 
-	conf, err := yesNo()
+	conf, err := getUserConfirmation()
 	if err != nil {
 		return err
 	}
@@ -100,18 +100,18 @@ func run(args []string) error {
 	return nil
 }
 
-func yesNo() (bool, error) {
-	result := "Yes"
+func getUserConfirmation() (bool, error) {
+	result := "Apply"
 	var err error
 	if *requireConfirmation {
 		prompt := promptui.Select{
-			Label: "Would you like to apply this? [Yes/No]",
-			Items: []string{"Yes", "No"},
+			Label: "Would you like to apply this? [Apply/Don't Apply]",
+			Items: []string{"Apply", "Don't Apply"},
 		}
 		_, result, err = prompt.Run()
 		if err != nil {
 			return false, err
 		}
 	}
-	return result == "Yes", nil
+	return result == "Apply", nil
 }

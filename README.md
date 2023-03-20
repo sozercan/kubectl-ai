@@ -1,14 +1,14 @@
 # Kubectl OpenAI plugin ✨
 
-This project is a `kubectl` plugin to generate and apply Kubernetes manifests using OpenAI GPT-3.
+This project is a `kubectl` plugin to generate and apply Kubernetes manifests using OpenAI GPT.
 
-Main motivation for me is to avoid finding random manifests when dev/testing things.
+My main motivation is to avoid finding and collecting random manifests when dev/testing things.
 
 ## Usage
 
 ### Prerequisites
 
-`kubectl-ai` requires an [OpenAI API key](https://platform.openai.com/overview) or an [Azure OpenAI Service](https://aka.ms/azure-openai) API key and endpoint. Also, `kubectl` is required with a valid kubeconfig.
+`kubectl-ai` requires an [OpenAI API key](https://platform.openai.com/overview) or an [Azure OpenAI Service](https://aka.ms/azure-openai) API key and endpoint, and a valid Kubernetes configuration.
 
 > I don't have a non-Azure OpenAI API key, non-Azure OpenAI API is not tested.
 
@@ -35,7 +35,7 @@ If `AZURE_OPENAI_ENDPOINT` variable is set, then it will use the Azure OpenAI Se
 
 ### Flags and environment variables
 
-- `--require-confirmation` flag or `REQUIRE_CONFIRMATION` environment varible can be set to prompt the user for confirmation before applying the manifest. Defaults to false.
+- `--require-confirmation` flag or `REQUIRE_CONFIRMATION` environment varible can be set to prompt the user for confirmation before applying the manifest. Defaults to true.
 
 - `--temperature` flag or `TEMPERATURE` environment variable can be set between 0 and 1. Higher temperature will result in more creative completions. Lower temperature will result in more deterministic completions. Defaults to 0.
 
@@ -68,6 +68,10 @@ spec:
         ports:
         - containerPort: 80
 EOF
+Use the arrow keys to navigate: ↓ ↑ → ←
+? Would you like to apply this? [Apply/Don't Apply]:
+  ▸ Apply
+    Don't Apply
 ```
 
 ```shell
@@ -91,12 +95,18 @@ spec:
         - name: nginx
           image: nginx
 EOF
+Use the arrow keys to navigate: ↓ ↑ → ←
+? Would you like to apply this? [Apply/Don't Apply]:
+  ▸ Apply
+    Don't Apply
 ```
+
+> Please note that the plugin does not know the current state of the cluster (yet?), so it will always generate the full manifest.
 
 Optional `--require-confirmation` flag:
 
 ```shell
-$ kubectl ai "create a service with type LoadBalancer with selector as 'app:nginx'" --require-confirmation
+$ kubectl ai "create a service with type LoadBalancer with selector as 'app:nginx'" --require-confirmation=false
 ✨ Attempting to apply the following manifest:
 apiVersion: v1
 kind: Service
@@ -110,9 +120,9 @@ spec:
     targetPort: 80
   type: LoadBalancer
 Use the arrow keys to navigate: ↓ ↑ → ←
-? Would you like to apply this? [Yes/No]:
-  ▸ Yes
-    No
+? Would you like to apply this? [Apply/Don't Apply]:
+  ▸ Apply
+    Don't Apply
 ```
 
 Multiple objects:
@@ -135,6 +145,10 @@ spec:
   - name: nginx
     image: nginx:latest
 EOF
+Use the arrow keys to navigate: ↓ ↑ → ←
+? Would you like to apply this? [Apply/Don't Apply]:
+  ▸ Apply
+    Don't Apply
 ```
 
 ## Acknowledgements and Credits
