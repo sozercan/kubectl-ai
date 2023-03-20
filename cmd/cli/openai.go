@@ -45,7 +45,7 @@ func gptCompletion(ctx context.Context, client oaiClients, prompts []string, dep
 	}
 
 	var prompt strings.Builder
-	fmt.Fprintf(&prompt, "You are a Kubernetes YAML generator. All responses should be prefixed with 'cat <<EOF | kubectl apply -f -', followed by the Kubernetes object definition generated from the prompt, and finally 'EOF'.")
+	fmt.Fprintf(&prompt, "You are a Kubernetes YAML generator, only generate valid Kubernetes YAML manifests.")
 	for _, p := range prompts {
 		fmt.Fprintf(&prompt, "%s\n", p)
 	}

@@ -1,12 +1,10 @@
 package cli
 
 import (
-	"bytes"
 	"context"
 	"flag"
 	"fmt"
 	"os"
-	"os/exec"
 	"os/signal"
 
 	"github.com/manifoldco/promptui"
@@ -15,7 +13,7 @@ import (
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 )
 
-const version = "0.0.1"
+const version = "0.0.2"
 
 var (
 	kubernetesConfigFlags *genericclioptions.ConfigFlags
@@ -57,7 +55,7 @@ func RootCmd() *cobra.Command {
 
 			err := run(args)
 			if err != nil {
-				return fmt.Errorf("application returned an error: %w", err)
+				return err
 			}
 
 			return nil
@@ -85,7 +83,7 @@ func run(args []string) error {
 		return err
 	}
 
-	text := fmt.Sprintf("✨ Attempting to run the following command: %s", completion)
+	text := fmt.Sprintf("✨ Attempting to apply the following manifest: %s", completion)
 	fmt.Println(text)
 
 	conf, err := yesNo()
@@ -94,13 +92,8 @@ func run(args []string) error {
 	}
 
 	if conf {
-		var stderr bytes.Buffer
-		cmd := exec.Command("sh", "-c", completion)
-		cmd.Stderr = &stderr
-
-		err = cmd.Run()
-		if err != nil {
-			return fmt.Errorf("%w: %s", err, stderr.String())
+		if err = applyManifest(completion); err != nil {
+			return err
 		}
 	}
 	return nil
