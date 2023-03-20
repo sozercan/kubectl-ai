@@ -6,23 +6,24 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"strconv"
 
 	"github.com/manifoldco/promptui"
-	"github.com/sozercan/kubectl-ai/pkg/utils"
 	"github.com/spf13/cobra"
+	"github.com/walles/env"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 )
 
-const version = "0.0.2"
+const version = "0.0.3"
 
 var (
 	kubernetesConfigFlags *genericclioptions.ConfigFlags
 
-	openAIDeploymentName = flag.String("openai-deployment-name", utils.LookupEnvOrString("OPENAI_DEPLOYMENT_NAME", "text-davinci-003"), "The deployment name used for the model in OpenAI service.")
-	openAIAPIKey         = flag.String("openai-api-key", utils.LookupEnvOrString("OPENAI_API_KEY", ""), "The API key for the OpenAI service. This is required.")
-	azureOpenAIEndpoint  = flag.String("azure-openai-endpoint", utils.LookupEnvOrString("AZURE_OPENAI_ENDPOINT", ""), "The endpoint for Azure OpenAI service. If provided, Azure OpenAI service will be used instead of OpenAI service.")
-	requireConfirmation  = flag.Bool("require-confirmation", false, "Whether to require confirmation before executing the command. Defaults to false.")
-	temperature          = flag.Float64("temperature", 1, "The temperature to use for the model. Range is between 0 and 1. Set closer to 0 if your want output to be more deterministic but less creative. Defaults to 1.")
+	openAIDeploymentName = flag.String("openai-deployment-name", env.GetOr("OPENAI_DEPLOYMENT_NAME", env.String, "text-davinci-003"), "The deployment name used for the model in OpenAI service.")
+	openAIAPIKey         = flag.String("openai-api-key", env.GetOr("OPENAI_API_KEY", env.String, ""), "The API key for the OpenAI service. This is required.")
+	azureOpenAIEndpoint  = flag.String("azure-openai-endpoint", env.GetOr("AZURE_OPENAI_ENDPOINT", env.String, ""), "The endpoint for Azure OpenAI service. If provided, Azure OpenAI service will be used instead of OpenAI service.")
+	requireConfirmation  = flag.Bool("require-confirmation", env.GetOr("REQUIRE_CONFIRMATION", strconv.ParseBool, false), "Whether to require confirmation before executing the command. Defaults to false.")
+	temperature          = flag.Float64("temperature", env.GetOr("TEMPERATURE", env.WithBitSize(strconv.ParseFloat, 64), 0.0), "The temperature to use for the model. Range is between 0 and 1. Set closer to 0 if your want output to be more deterministic but less creative. Defaults to 0.0.")
 )
 
 var maxTokensMap = map[string]int{

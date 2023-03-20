@@ -8,6 +8,7 @@ require (
 	github.com/samber/go-gpt-3-encoder v0.3.1
 	github.com/spf13/cobra v1.6.1
 	github.com/stretchr/testify v1.8.2
+	github.com/walles/env v0.0.4
 	golang.org/x/net v0.8.0
 	k8s.io/apimachinery v0.26.3
 	k8s.io/cli-runtime v0.26.3

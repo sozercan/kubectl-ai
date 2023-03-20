@@ -33,11 +33,11 @@ If `AZURE_OPENAI_ENDPOINT` variable is set, then it will use the Azure OpenAI Se
 
 - If you want to use this as a [`kubectl` plugin](https://kubernetes.io/docs/tasks/extend-kubectl/kubectl-plugins/), then copy `kubectl-ai` binary to your `PATH`. If not, you can also use the binary standalone.
 
-### Flags
+### Flags and environment variables
 
-- Optional: `--require-confirmation` can be set to prompt the user for confirmation before applying the manifest. Defaults to false.
+- `--require-confirmation` flag or `REQUIRE_CONFIRMATION` environment varible can be set to prompt the user for confirmation before applying the manifest. Defaults to false.
 
-- Optional: `--temperature` can be set between 0 and 1. Higher temperature will result in more creative completions. Lower temperature will result in more deterministic completions. Defaults to 1.
+- `--temperature` flag or `TEMPERATURE` environment variable can be set between 0 and 1. Higher temperature will result in more creative completions. Lower temperature will result in more deterministic completions. Defaults to 0.
 
 ## Examples
 
@@ -136,14 +136,6 @@ spec:
     image: nginx:latest
 EOF
 ```
-
-## FAQ
-
-Q: Is this a good idea?
-A: Probably not.
-
-Q: Should I try this in my Kubernetes cluster?
-A: At your own risk.
 
 ## Acknowledgements and Credits
 
