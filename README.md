@@ -10,8 +10,6 @@ My main motivation is to avoid finding and collecting random manifests when dev/
 
 `kubectl-ai` requires an [OpenAI API key](https://platform.openai.com/overview) or an [Azure OpenAI Service](https://aka.ms/azure-openai) API key and endpoint, and a valid Kubernetes configuration.
 
-> I don't have a non-Azure OpenAI API key, non-Azure OpenAI API is not tested.
-
 For both OpenAI and Azure OpenAI, you can use the following environment variables:
 
 ```shell

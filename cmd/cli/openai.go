@@ -51,7 +51,7 @@ func gptCompletion(ctx context.Context, client oaiClients, prompts []string, dep
 	}
 
 	if azureOpenAIEndpoint == nil || *azureOpenAIEndpoint == "" {
-		resp, err := client.openAIClient.Completion(ctx, openai.CompletionRequest{
+		resp, err := client.openAIClient.CompletionWithEngine(ctx, *openAIDeploymentName, openai.CompletionRequest{
 			Prompt:      []string{prompt.String()},
 			MaxTokens:   maxTokens,
 			Echo:        false,
