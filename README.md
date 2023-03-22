@@ -14,13 +14,20 @@ For both OpenAI and Azure OpenAI, you can use the following environment variable
 
 ```shell
 export OPENAI_API_KEY=<your OpenAI key>
+export OPENAI_DEPLOYMENT_NAME=<your OpenAI deployment/model name. defaults to "gpt-3.5-turbo">
 ```
+
+> Following models are supported:
+> - `code-davinci-002`
+> - `text-davinci-003`
+> - `gpt-3.5-turbo-0301` (deployment must be named `gpt-35-turbo-0301` for Azure )
+> - `gpt-3.5-turbo`
+> - `gpt-35-turbo-0301`
 
 For Azure OpenAI Service, you can use the following environment variables:
 
 ```shell
-export AZURE_OPENAI_ENDPOINT=<your Azure OpenAI endpoint, like https://my-aoi-endpoint.openai.azure.com>
-export OPENAI_DEPLOYMENT_NAME=<your OpenAI deployment/model name. defaults to "text-davinci-003">
+export AZURE_OPENAI_ENDPOINT=<your Azure OpenAI endpoint, like "https://my-aoi-endpoint.openai.azure.com">
 ```
 
 If `AZURE_OPENAI_ENDPOINT` variable is set, then it will use the Azure OpenAI Service. Otherwise, it will use OpenAI API.

@@ -12,13 +12,17 @@ import (
 )
 
 const (
-	defaultAPIVersion     = "2022-12-01"
+	defaultAPIVersion     = "2023-03-15-preview"
 	defaultUserAgent      = "kubectl-openai"
 	defaultTimeoutSeconds = 30
 )
 
 // A Client is an API client to communicate with the OpenAI gpt-3 APIs.
 type Client interface {
+	// ChatCompletion creates a completion with the Chat completion endpoint which
+	// is what powers the ChatGPT experience.
+	ChatCompletion(ctx context.Context, request ChatCompletionRequest) (*ChatCompletionResponse, error)
+
 	// Completion creates a completion with the default engine. This is the main endpoint of the API
 	// which auto-completes based on the given prompt.
 	Completion(ctx context.Context, request CompletionRequest) (*CompletionResponse, error)
@@ -80,6 +84,26 @@ func (c *client) Completion(ctx context.Context, request CompletionRequest) (*Co
 	}
 
 	output := new(CompletionResponse)
+	if err := getResponseObject(resp, output); err != nil {
+		return nil, err
+	}
+	return output, nil
+}
+
+func (c *client) ChatCompletion(ctx context.Context, request ChatCompletionRequest) (*ChatCompletionResponse, error) {
+	request.Stream = false
+
+	req, err := c.newRequest(ctx, "POST", fmt.Sprintf("/openai/deployments/%s/chat/completions", c.deploymentName), request)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := c.performRequest(req)
+	if err != nil {
+		return nil, err
+	}
+
+	output := new(ChatCompletionResponse)
 	if err := getResponseObject(resp, output); err != nil {
 		return nil, err
 	}

@@ -26,11 +26,6 @@ var (
 	temperature          = flag.Float64("temperature", env.GetOr("TEMPERATURE", env.WithBitSize(strconv.ParseFloat, 64), 0.0), "The temperature to use for the model. Range is between 0 and 1. Set closer to 0 if your want output to be more deterministic but less creative. Defaults to 0.0.")
 )
 
-var maxTokensMap = map[string]int{
-	"text-davinci-003": 4097,
-	"code-davinci-002": 8001,
-}
-
 func InitAndExecute() {
 	flag.Parse()
 
