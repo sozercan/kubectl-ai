@@ -99,9 +99,15 @@ func gptCompletion(ctx context.Context, client oaiClients, prompts []string, dep
 }
 
 func calculateMaxTokens(prompts []string, deploymentName string) (*int, error) {
-	maxTokens, ok := maxTokensMap[deploymentName]
-	if !ok {
-		return nil, fmt.Errorf("deploymentName %q not found in max tokens map", deploymentName)
+	var maxTokensFinal int
+	if *maxTokens == 0 {
+		var ok bool
+		maxTokensFinal, ok = maxTokensMap[deploymentName]
+		if !ok {
+			return nil, fmt.Errorf("deploymentName %q not found in max tokens map", deploymentName)
+		}
+	} else {
+		maxTokensFinal = *maxTokens
 	}
 
 	encoder, err := gptEncoder.NewEncoder()
@@ -119,6 +125,6 @@ func calculateMaxTokens(prompts []string, deploymentName string) (*int, error) {
 		totalTokens += len(tokens)
 	}
 
-	remainingTokens := maxTokens - totalTokens
+	remainingTokens := maxTokensFinal - totalTokens
 	return &remainingTokens, nil
 }
