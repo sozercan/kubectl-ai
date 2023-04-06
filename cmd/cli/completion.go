@@ -20,6 +20,8 @@ var maxTokensMap = map[string]int{
 	"gpt-3.5-turbo-0301": 4096,
 	"gpt-3.5-turbo":      4096,
 	"gpt-35-turbo-0301":  4096, // for azure
+	"gpt-4-0314":         8192,
+	"gpt-4-32k-0314":     8192,
 }
 
 type oaiClients struct {
@@ -62,13 +64,13 @@ func gptCompletion(ctx context.Context, client oaiClients, prompts []string, dep
 	}
 
 	var prompt strings.Builder
-	fmt.Fprintf(&prompt, "You are a Kubernetes YAML generator, only generate valid Kubernetes YAML manifests.")
+	fmt.Fprintf(&prompt, "You are a Kubernetes YAML generator, only generate valid Kubernetes YAML manifests. Do not provide any explanations, only generate YAML.")
 	for _, p := range prompts {
 		fmt.Fprintf(&prompt, "%s\n", p)
 	}
 
 	if azureOpenAIEndpoint == nil || *azureOpenAIEndpoint == "" {
-		if *openAIDeploymentName == "gpt-3.5-turbo-0301" || *openAIDeploymentName == "gpt-3.5-turbo" {
+		if *openAIDeploymentName == "gpt-3.5-turbo-0301" || *openAIDeploymentName == "gpt-3.5-turbo" || *openAIDeploymentName == "gpt-4-0314" || *openAIDeploymentName == "gpt-4-32k-0314" {
 			resp, err := client.openaiGptChatCompletion(ctx, prompt, maxTokens, temp)
 			if err != nil {
 				return "", err
@@ -83,7 +85,7 @@ func gptCompletion(ctx context.Context, client oaiClients, prompts []string, dep
 		return resp, nil
 	}
 
-	if *openAIDeploymentName == "gpt-35-turbo-0301" || *openAIDeploymentName == "gpt-35-turbo" {
+	if *openAIDeploymentName == "gpt-35-turbo-0301" || *openAIDeploymentName == "gpt-4-0314" || *openAIDeploymentName == "gpt-4-32k-0314" {
 		resp, err := client.azureGptChatCompletion(ctx, prompt, maxTokens, temp)
 		if err != nil {
 			return "", err

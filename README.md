@@ -23,6 +23,8 @@ export OPENAI_DEPLOYMENT_NAME=<your OpenAI deployment/model name. defaults to "g
 > - `gpt-3.5-turbo-0301` (deployment must be named `gpt-35-turbo-0301` for Azure )
 > - `gpt-3.5-turbo`
 > - `gpt-35-turbo-0301`
+> - `gpt-4-0314`
+> - `gpt-4-32k-0314`
 
 For Azure OpenAI Service, you can use the following environment variables:
 
