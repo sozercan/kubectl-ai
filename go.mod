@@ -3,7 +3,7 @@ module github.com/sozercan/kubectl-ai
 go 1.20
 
 require (
-	github.com/PullRequestInc/go-gpt3 v1.1.14
+	github.com/PullRequestInc/go-gpt3 v1.1.15
 	github.com/manifoldco/promptui v0.9.0
 	github.com/samber/go-gpt-3-encoder v0.3.1
 	github.com/spf13/cobra v1.6.1
