@@ -92,20 +92,20 @@ func run(args []string) error {
 		text := fmt.Sprintf("✨ Attempting to apply the following manifest:\n%s", completion)
 		fmt.Println(text)
 
-		action, err = getUserConfirmation()
+		action, err = userActionPrompt()
 		if err != nil {
 			return err
 		}
 
 		if action == dontApply {
-			break
+			return nil
 		}
 	}
 
 	return applyManifest(completion)
 }
 
-func getUserConfirmation() (string, error) {
+func userActionPrompt() (string, error) {
 	// if require confirmation is not set, immediately return apply
 	if !*requireConfirmation {
 		return apply, nil
