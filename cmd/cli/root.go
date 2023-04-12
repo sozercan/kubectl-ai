@@ -14,7 +14,13 @@ import (
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 )
 
-const version = "0.0.3"
+const (
+	version = "0.0.7"
+
+	apply     = "Apply"
+	dontApply = "Don't Apply"
+	reprompt  = "Reprompt"
+)
 
 var (
 	kubernetesConfigFlags *genericclioptions.ConfigFlags
@@ -75,39 +81,50 @@ func run(args []string) error {
 		return err
 	}
 
-	completion, err := gptCompletion(ctx, oaiClients, args, *openAIDeploymentName)
-	if err != nil {
-		return err
-	}
-
-	text := fmt.Sprintf("✨ Attempting to apply the following manifest: %s", completion)
-	fmt.Println(text)
-
-	conf, err := getUserConfirmation()
-	if err != nil {
-		return err
-	}
-
-	if conf {
-		if err = applyManifest(completion); err != nil {
+	var action, completion string
+	for action != apply {
+		args = append(args, action)
+		completion, err = gptCompletion(ctx, oaiClients, args, *openAIDeploymentName)
+		if err != nil {
 			return err
 		}
+
+		text := fmt.Sprintf("✨ Attempting to apply the following manifest:\n%s", completion)
+		fmt.Println(text)
+
+		action, err = getUserConfirmation()
+		if err != nil {
+			return err
+		}
+
+		if action == dontApply {
+			break
+		}
 	}
-	return nil
+
+	return applyManifest(completion)
 }
 
-func getUserConfirmation() (bool, error) {
-	result := "Apply"
-	var err error
-	if *requireConfirmation {
-		prompt := promptui.Select{
-			Label: "Would you like to apply this? [Apply/Don't Apply]",
-			Items: []string{"Apply", "Don't Apply"},
-		}
-		_, result, err = prompt.Run()
-		if err != nil {
-			return false, err
-		}
+func getUserConfirmation() (string, error) {
+	// if require confirmation is not set, immediately return apply
+	if !*requireConfirmation {
+		return apply, nil
 	}
-	return result == "Apply", nil
+
+	var result string
+	var err error
+	items := []string{apply, dontApply}
+	label := fmt.Sprintf("Would you like to apply this? [%s/%s/%s]", reprompt, apply, dontApply)
+
+	prompt := promptui.SelectWithAdd{
+		Label:    label,
+		Items:    items,
+		AddLabel: reprompt,
+	}
+	_, result, err = prompt.Run()
+	if err != nil {
+		return dontApply, err
+	}
+
+	return result, nil
 }
