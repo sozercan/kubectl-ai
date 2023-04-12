@@ -48,7 +48,7 @@ If `AZURE_OPENAI_ENDPOINT` variable is set, then it will use the Azure OpenAI Se
 
 ## Examples
 
-Creating objects with specific values:
+### Creating objects with specific values
 
 ```shell
 $ kubectl ai "create an nginx deployment with 3 replicas"
@@ -74,20 +74,25 @@ spec:
         image: nginx:1.7.9
         ports:
         - containerPort: 80
-EOF
 Use the arrow keys to navigate: ↓ ↑ → ←
-? Would you like to apply this? [Apply/Don't Apply]:
+? Would you like to apply this? [Reprompt/Apply/Don't Apply]:
++   Reprompt
   ▸ Apply
     Don't Apply
 ```
 
+### Reprompt to refine your prompt
+
 ```shell
-$ kubectl ai "scale nginx-deployment to 5 replicas"
+...
+Reprompt: update to 5 replicas and port 8080
 ✨ Attempting to apply the following manifest:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nginx-deployment
+  labels:
+    app: nginx
 spec:
   replicas: 5
   selector:
@@ -102,35 +107,15 @@ spec:
       - name: nginx
         image: nginx:1.7.9
         ports:
-        - containerPort: 80
-EOF
+        - containerPort: 8080
 Use the arrow keys to navigate: ↓ ↑ → ←
-? Would you like to apply this? [Apply/Don't Apply]:
+? Would you like to apply this? [Reprompt/Apply/Don't Apply]:
++   Reprompt
   ▸ Apply
     Don't Apply
 ```
 
-> Please note that the plugin does not know the current state of the cluster (yet?), so it will always generate the full manifest.
-
-Optional `--require-confirmation` flag:
-
-```shell
-$ kubectl ai "create a service with type LoadBalancer with selector as 'app:nginx'" --require-confirmation=false
-✨ Attempting to apply the following manifest:
-apiVersion: v1
-kind: Service
-metadata:
-  name: nginx-service
-spec:
-  selector:
-    app: nginx
-  ports:
-  - port: 80
-    targetPort: 80
-  type: LoadBalancer
-```
-
-Multiple objects:
+### Multiple objects
 
 ```shell
 $ kubectl ai "create a foo namespace then create nginx pod in that namespace"
@@ -149,12 +134,32 @@ spec:
   containers:
   - name: nginx
     image: nginx:latest
-EOF
 Use the arrow keys to navigate: ↓ ↑ → ←
-? Would you like to apply this? [Apply/Don't Apply]:
+? Would you like to apply this? [Reprompt/Apply/Don't Apply]:
++   Reprompt
   ▸ Apply
     Don't Apply
 ```
+
+### Optional `--require-confirmation` flag
+
+```shell
+$ kubectl ai "create a service with type LoadBalancer with selector as 'app:nginx'" --require-confirmation=false
+✨ Attempting to apply the following manifest:
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  selector:
+    app: nginx
+  ports:
+  - port: 80
+    targetPort: 80
+  type: LoadBalancer
+```
+
+> Please note that the plugin does not know the current state of the cluster (yet?), so it will always generate the full manifest.
 
 ## Acknowledgements and Credits
 
