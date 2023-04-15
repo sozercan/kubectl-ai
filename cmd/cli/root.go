@@ -42,15 +42,15 @@ func InitAndExecute() {
 	}
 
 	if err := RootCmd().Execute(); err != nil {
-		fmt.Println(err)
 		os.Exit(1)
 	}
 }
 
 func RootCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "kubectl-ai",
-		Version: version,
+		Use:          "kubectl-ai",
+		Version:      version,
+		SilenceUsage: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if len(args) == 0 {
 				return fmt.Errorf("prompt must be provided")
