@@ -3,7 +3,6 @@ package cli
 import (
 	"bytes"
 	"context"
-	"flag"
 	"path/filepath"
 
 	"k8s.io/apimachinery/pkg/api/meta"
@@ -19,20 +18,17 @@ import (
 	"k8s.io/client-go/util/homedir"
 )
 
-const defaultNamespace = "default" // TODO: get from kubeconfig
-
-// TODO: get existing objects and pass to prompt
+const defaultNamespace = "default"
 
 func applyManifest(completion string) error {
-	var kubeconfig *string
-	if home := homedir.HomeDir(); home != "" {
-		kubeconfig = flag.String("kubeconfig", filepath.Join(home, ".kube", "config"), "(optional) absolute path to the kubeconfig file")
+	var kubeConfig string
+	if *kubernetesConfigFlags.KubeConfig == "" {
+		kubeConfig = filepath.Join(homedir.HomeDir(), ".kube", "config")
 	} else {
-		kubeconfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
+		kubeConfig = *kubernetesConfigFlags.KubeConfig
 	}
-	flag.Parse()
 
-	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
+	config, err := clientcmd.BuildConfigFromFlags("", kubeConfig)
 	if err != nil {
 		return err
 	}
@@ -45,6 +41,25 @@ func applyManifest(completion string) error {
 	dd, err := dynamic.NewForConfig(config)
 	if err != nil {
 		return err
+	}
+
+	var namespace string
+	if *kubernetesConfigFlags.Namespace == "" {
+		clientConfig, err := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(
+			&clientcmd.ClientConfigLoadingRules{ExplicitPath: kubeConfig},
+			&clientcmd.ConfigOverrides{
+				CurrentContext: "",
+			}).RawConfig()
+		if err != nil {
+			return err
+		}
+		if clientConfig.Contexts[clientConfig.CurrentContext].Namespace == "" {
+			namespace = defaultNamespace
+		} else {
+			namespace = clientConfig.Contexts[clientConfig.CurrentContext].Namespace
+		}
+	} else {
+		namespace = *kubernetesConfigFlags.Namespace
 	}
 
 	manifest := []byte(completion)
@@ -80,7 +95,7 @@ func applyManifest(completion string) error {
 		var dri dynamic.ResourceInterface
 		if mapping.Scope.Name() == meta.RESTScopeNameNamespace {
 			if unstructuredObj.GetNamespace() == "" {
-				unstructuredObj.SetNamespace(defaultNamespace)
+				unstructuredObj.SetNamespace(namespace)
 			}
 			dri = dd.Resource(mapping.Resource).Namespace(unstructuredObj.GetNamespace())
 		} else {
