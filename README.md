@@ -4,6 +4,31 @@ This project is a `kubectl` plugin to generate and apply Kubernetes manifests us
 
 My main motivation is to avoid finding and collecting random manifests when dev/testing things.
 
+## Installation
+
+## Homebrew
+
+Add to `brew` tap and install with:
+
+```shell
+brew tap sozercan/kubectl-ai https://github.com/sozercan/kubectl-ai
+brew install kubectl-ai
+```
+
+## Krew
+
+Add to `krew` index and install with:
+
+```shell
+kubectl krew index add kubectl-ai https://github.com/sozercan/kubectl-ai
+kubectl krew install kubectl-ai/kubectl-ai
+```
+
+## GitHub release
+- Download the binary from [GitHub releases](https://github.com/sozercan/kubectl-ai/releases).
+
+- If you want to use this as a [`kubectl` plugin](https://kubernetes.io/docs/tasks/extend-kubectl/kubectl-plugins/), then copy `kubectl-ai` binary to your `PATH`. If not, you can also use the binary standalone.
+
 ## Usage
 
 ### Prerequisites
@@ -33,12 +58,6 @@ export AZURE_OPENAI_ENDPOINT=<your Azure OpenAI endpoint, like "https://my-aoi-e
 ```
 
 If `AZURE_OPENAI_ENDPOINT` variable is set, then it will use the Azure OpenAI Service. Otherwise, it will use OpenAI API.
-
-### Installation
-
-- Download the binary from [GitHub releases](https://github.com/sozercan/kubectl-ai/releases).
-
-- If you want to use this as a [`kubectl` plugin](https://kubernetes.io/docs/tasks/extend-kubectl/kubectl-plugins/), then copy `kubectl-ai` binary to your `PATH`. If not, you can also use the binary standalone.
 
 ### Flags and environment variables
 
