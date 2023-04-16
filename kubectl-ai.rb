@@ -10,7 +10,7 @@ class KubectlAi < Formula
   on_macos do
     if Hardware::CPU.arm?
       url "https://github.com/sozercan/kubectl-ai/releases/download/v0.0.9/kubectl-ai_darwin_arm64.tar.gz"
-      sha256 "f1d834181296005ec7d0fedb08f5810ccae5e6115dfc6eddd5fd93ae144322cc"
+      sha256 "9d2f7bf3b7a996a3d763befb6e78b1cb0671aacac03af8d7a7333479b5ed79c1"
 
       def install
         bin.install "kubectl-ai"
@@ -18,7 +18,7 @@ class KubectlAi < Formula
     end
     if Hardware::CPU.intel?
       url "https://github.com/sozercan/kubectl-ai/releases/download/v0.0.9/kubectl-ai_darwin_amd64.tar.gz"
-      sha256 "b4a3ea25b23200eeaf92514482b326c2bed170f7ea273dced23f83f9ee38dcdd"
+      sha256 "9c966433ed9d2dd82babe597ecde485c3323b4ef27d2afd1abf930674b63eb5a"
 
       def install
         bin.install "kubectl-ai"
@@ -29,7 +29,7 @@ class KubectlAi < Formula
   on_linux do
     if Hardware::CPU.arm? && Hardware::CPU.is_64_bit?
       url "https://github.com/sozercan/kubectl-ai/releases/download/v0.0.9/kubectl-ai_linux_arm64.tar.gz"
-      sha256 "2e635ab6441326f85955f56e60bc5be93254eeebf4224f488f6265e1743364cc"
+      sha256 "0eb185e62d5167a6beb491415caf0710251aee54f65df218e336c05f7a3ea423"
 
       def install
         bin.install "kubectl-ai"
@@ -37,7 +37,7 @@ class KubectlAi < Formula
     end
     if Hardware::CPU.intel?
       url "https://github.com/sozercan/kubectl-ai/releases/download/v0.0.9/kubectl-ai_linux_amd64.tar.gz"
-      sha256 "04671ad847123ce0001e6a497c51b88e0e474be6b09aa5071e5c1f09b11cc1ba"
+      sha256 "122d04ab39b184bec19d2f4efdfed85792e3589e7c79bbba827dd290e85b8d02"
 
       def install
         bin.install "kubectl-ai"
