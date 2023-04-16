@@ -4,6 +4,10 @@ This project is a `kubectl` plugin to generate and apply Kubernetes manifests us
 
 My main motivation is to avoid finding and collecting random manifests when dev/testing things.
 
+## Demo
+
+[![asciicast](https://asciinema.org/a/MEXrlAqUjo7DMnfoyQearpVQ7.svg)](https://asciinema.org/a/MEXrlAqUjo7DMnfoyQearpVQ7)
+
 ## Installation
 
 ### Homebrew

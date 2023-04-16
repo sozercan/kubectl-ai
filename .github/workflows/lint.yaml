@@ -1,5 +1,8 @@
 name: lint
 
+paths-ignore:
+  - '**.md'
+
 on:
   push:
     branches:
