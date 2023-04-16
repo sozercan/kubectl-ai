@@ -36,3 +36,30 @@ archives:
 checksum:
   name_template: "{{ .ProjectName }}_checksums.txt"
   algorithm: sha256
+
+brews:
+  - tap:
+      owner: sozercan
+      name: kubectl-ai
+      branch: chore-{{.Tag}}
+      pull_request:
+        enabled: true
+    commit_author:
+      name: Sertac Ozercan
+      email: sozercan@gmail.com
+    description: "kubectl-ai is a kubectl plugin to generate and apply Kubernetes manifests using OpenAI GPT."
+    caveats: "This plugin requires an OpenAI key."
+
+krews:
+  - index:
+      owner: sozercan
+      name: kubectl-ai
+      branch: chore-{{.Tag}}
+      pull_request:
+        enabled: true
+    commit_author:
+      name: Sertac Ozercan
+      email: sozercan@gmail.com
+    description: "kubectl-ai is a kubectl plugin to generate and apply Kubernetes manifests using OpenAI GPT."
+    short_description: "Generate and apply manifests using OpenAI GPT."
+    caveats: "This plugin requires an OpenAI key."
