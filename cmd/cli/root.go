@@ -93,19 +93,17 @@ func run(args []string) error {
 		if *raw {
 			fmt.Println(completion)
 			return nil
-		} else {
+		}
+		text := fmt.Sprintf("✨ Attempting to apply the following manifest:\n%s", completion)
+		fmt.Println(text)
 
-			text := fmt.Sprintf("✨ Attempting to apply the following manifest:\n%s", completion)
-			fmt.Println(text)
+		action, err = userActionPrompt()
+		if err != nil {
+			return err
+		}
 
-			action, err = userActionPrompt()
-			if err != nil {
-				return err
-			}
-
-			if action == dontApply {
-				return nil
-			}
+		if action == dontApply {
+			return nil
 		}
 	}
 
