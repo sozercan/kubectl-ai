@@ -31,7 +31,7 @@ var (
 	azureOpenAIEndpoint  = flag.String("azure-openai-endpoint", env.GetOr("AZURE_OPENAI_ENDPOINT", env.String, ""), "The endpoint for Azure OpenAI service. If provided, Azure OpenAI service will be used instead of OpenAI service.")
 	requireConfirmation  = flag.Bool("require-confirmation", env.GetOr("REQUIRE_CONFIRMATION", strconv.ParseBool, true), "Whether to require confirmation before executing the command. Defaults to true.")
 	temperature          = flag.Float64("temperature", env.GetOr("TEMPERATURE", env.WithBitSize(strconv.ParseFloat, 64), 0.0), "The temperature to use for the model. Range is between 0 and 1. Set closer to 0 if your want output to be more deterministic but less creative. Defaults to 0.0.")
-	raw                  = flag.String("raw", "", "This output of the generated YAML.")
+	raw                  = flag.Bool("raw", false, "This generate raw output of the YAML.")
 )
 
 func InitAndExecute() {
@@ -90,7 +90,7 @@ func run(args []string) error {
 			return err
 		}
 
-		if *raw == "raw" {
+		if *raw {
 			fmt.Println(completion)
 			return nil
 		} else {
