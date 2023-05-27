@@ -69,6 +69,18 @@ If `AZURE_OPENAI_ENDPOINT` variable is set, then it will use the Azure OpenAI Se
 
 - `--temperature` flag or `TEMPERATURE` environment variable can be set between 0 and 1. Higher temperature will result in more creative completions. Lower temperature will result in more deterministic completions. Defaults to 0.
 
+### Use with external editors
+
+If you want to use an external editor to edit the generated manifest, you can set the `--raw` flag and pipe to the editor of your choice. For example:
+
+```shell
+# Visual Studio Code
+$ kubectl ai "create a foo namespace" --raw | code -
+
+# Vim
+$ kubectl ai "create a foo namespace" --raw | vim -
+```
+
 ## Examples
 
 ### Creating objects with specific values
