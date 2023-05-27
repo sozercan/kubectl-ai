@@ -16,9 +16,7 @@ builds:
       - CGO_ENABLED=0
       - GO111MODULE=on
     ldflags: -s -w
-      -X github.com/sozercan/kubectl-ai/pkg/version.version={{.Version}}
-      -X github.com/sozercan/kubectl-ai/pkg/version.gitSHA={{.Commit}}
-      -X github.com/sozercan/kubectl-ai/pkg/version.buildTime={{.Date}}
+      -X github.com/sozercan/kubectl-ai/cmd/cli.version={{.Version}}
       -extldflags "-static"
     flags: -tags netgo -installsuffix netgo
     binary: kubectl-ai

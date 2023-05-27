@@ -43,15 +43,14 @@ For both OpenAI and Azure OpenAI, you can use the following environment variable
 
 ```shell
 export OPENAI_API_KEY=<your OpenAI key>
-export OPENAI_DEPLOYMENT_NAME=<your OpenAI deployment/model name. defaults to "gpt-3.5-turbo">
+export OPENAI_DEPLOYMENT_NAME=<your OpenAI deployment/model name. defaults to "gpt-3.5-turbo-0301">
 ```
 
 > Following models are supported:
 > - `code-davinci-002`
 > - `text-davinci-003`
-> - `gpt-3.5-turbo-0301` (deployment must be named `gpt-35-turbo-0301` for Azure )
 > - `gpt-3.5-turbo`
-> - `gpt-35-turbo-0301`
+> - `gpt-3.5-turbo-0301` (default)
 > - `gpt-4-0314`
 > - `gpt-4-32k-0314`
 
@@ -62,6 +61,12 @@ export AZURE_OPENAI_ENDPOINT=<your Azure OpenAI endpoint, like "https://my-aoi-e
 ```
 
 If `AZURE_OPENAI_ENDPOINT` variable is set, then it will use the Azure OpenAI Service. Otherwise, it will use OpenAI API.
+
+Azure OpenAI service does not allow certain characters, such as `.`, in the deployment name. Consequently, `kubectl-ai` will automatically replace `gpt-3.5-turbo` to `gpt-35-turbo` for Azure. However, if you use an Azure OpenAI deployment name completely different from the model name, you can set `AZURE_OPENAI_MAP` environment variable to map the model name to the Azure OpenAI deployment name. For example:
+
+```shell
+export AZURE_OPENAI_MAP="gpt-3.5-turbo=my-deployment"
+```
 
 ### Flags and environment variables
 
@@ -195,8 +200,3 @@ spec:
 ```
 
 > Please note that the plugin does not know the current state of the cluster (yet?), so it will always generate the full manifest.
-
-## Acknowledgements and Credits
-
-Thanks to @simongottschlag for their work on Azure OpenAI fork in https://github.com/simongottschlag/azure-openai-gpt-slack-bot
-which is based on https://github.com/PullRequestInc/go-gpt3
