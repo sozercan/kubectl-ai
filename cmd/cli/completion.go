@@ -2,10 +2,14 @@ package cli
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"net/http"
 	"strings"
+	"time"
 
 	openai "github.com/sashabaranov/go-openai"
+	"github.com/sethvargo/go-retry"
 	"golang.org/x/exp/slices"
 )
 
@@ -45,17 +49,29 @@ func gptCompletion(ctx context.Context, client oaiClients, prompts []string, dep
 		fmt.Fprintf(&prompt, "%s\n", p)
 	}
 
-	if slices.Contains(getNonChatModels(), deploymentName) {
-		resp, err := client.openaiGptCompletion(ctx, prompt, temp)
-		if err != nil {
-			return "", err
+	var resp string
+	var err error
+	r := retry.WithMaxRetries(10, retry.NewExponential(1*time.Second))
+	if err := retry.Do(ctx, r, func(ctx context.Context) error {
+		if slices.Contains(getNonChatModels(), deploymentName) {
+			resp, err = client.openaiGptCompletion(ctx, prompt, temp)
+		} else {
+			resp, err = client.openaiGptChatCompletion(ctx, prompt, temp)
 		}
-		return resp, nil
-	}
 
-	resp, err := client.openaiGptChatCompletion(ctx, prompt, temp)
-	if err != nil {
+		requestErr := &openai.RequestError{}
+		if errors.As(err, &requestErr) {
+			if requestErr.HTTPStatusCode == http.StatusTooManyRequests {
+				return retry.RetryableError(err)
+			}
+		}
+		if err != nil {
+			return err
+		}
+		return nil
+	}); err != nil {
 		return "", err
 	}
+
 	return resp, nil
 }
