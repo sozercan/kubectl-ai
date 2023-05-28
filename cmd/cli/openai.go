@@ -8,8 +8,6 @@ import (
 	openai "github.com/sashabaranov/go-openai"
 )
 
-const userRole = "user"
-
 func (c *oaiClients) openaiGptCompletion(ctx context.Context, prompt strings.Builder, temp float32) (string, error) {
 	req := openai.CompletionRequest{
 		Prompt:      []string{prompt.String()},
@@ -35,7 +33,7 @@ func (c *oaiClients) openaiGptChatCompletion(ctx context.Context, prompt strings
 		Model: *openAIDeploymentName,
 		Messages: []openai.ChatCompletionMessage{
 			{
-				Role:    userRole,
+				Role:    openai.ChatMessageRoleUser,
 				Content: prompt.String(),
 			},
 		},
