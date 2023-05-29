@@ -39,7 +39,7 @@ kubectl krew install kubectl-ai/kubectl-ai
 
 `kubectl-ai` requires an [OpenAI API key](https://platform.openai.com/overview) or an [Azure OpenAI Service](https://aka.ms/azure-openai) API key and endpoint, and a valid Kubernetes configuration.
 
-For both OpenAI and Azure OpenAI, you can use the following environment variables:
+For both OpenAI and Azure OpenAI , you can use the following environment variables:
 
 ```shell
 export OPENAI_API_KEY=<your OpenAI key>
