@@ -37,22 +37,18 @@ kubectl krew install kubectl-ai/kubectl-ai
 
 ### Prerequisites
 
-`kubectl-ai` requires an [OpenAI API key](https://platform.openai.com/overview) or an [Azure OpenAI Service](https://aka.ms/azure-openai) API key and endpoint, and a valid Kubernetes configuration.
+`kubectl-ai` requires a valid Kubernetes configuration and one of the following:
 
-For both OpenAI and Azure OpenAI, you can use the following environment variables:
+- [OpenAI API key](https://platform.openai.com/overview)
+- [Azure OpenAI Service](https://aka.ms/azure-openai) API key and endpoint
+- [Local AI](https://github.com/go-skynet/LocalAI) (see [getting started](https://localai.io/basics/getting_started/index.html))
+
+For OpenAI, Azure OpenAI or Local AI, you can use the following environment variables:
 
 ```shell
 export OPENAI_API_KEY=<your OpenAI key>
 export OPENAI_DEPLOYMENT_NAME=<your OpenAI deployment/model name. defaults to "gpt-3.5-turbo-0301">
 ```
-
-> Following models are supported:
-> - `code-davinci-002`
-> - `text-davinci-003`
-> - `gpt-3.5-turbo`
-> - `gpt-3.5-turbo-0301` (default)
-> - `gpt-4-0314`
-> - `gpt-4-32k-0314`
 
 For Azure OpenAI Service, you can use the following environment variables:
 
