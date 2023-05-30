@@ -54,6 +54,12 @@ export OPENAI_DEPLOYMENT_NAME=<your OpenAI deployment/model name. defaults to "g
 > - `gpt-4-0314`
 > - `gpt-4-32k-0314`
 
+If you want to use another OpenAI proxy address as the api base，you can use the following environment variables:
+
+```shell
+export OPENAI_API_BASE=<your api base. default to "https://api.openai.com">
+```
+
 For Azure OpenAI Service, you can use the following environment variables:
 
 ```shell
