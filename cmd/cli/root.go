@@ -3,14 +3,15 @@ package cli
 import (
 	"context"
 	"fmt"
+	"os"
+	"os/signal"
+	"strconv"
+
 	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 	"github.com/walles/env"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
-	"os"
-	"os/signal"
-	"strconv"
 )
 
 const (
