@@ -3,8 +3,6 @@ package cli
 import (
 	"bytes"
 	"context"
-	"path/filepath"
-
 	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
@@ -16,6 +14,7 @@ import (
 	"k8s.io/client-go/restmapper"
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/util/homedir"
+	"path/filepath"
 )
 
 const defaultNamespace = "default"
@@ -107,4 +106,22 @@ func applyManifest(completion string) error {
 		}
 	}
 	return nil
+}
+
+func getCurrentContextName() string {
+
+	var kubeConfig string
+	if *kubernetesConfigFlags.KubeConfig == "" {
+		kubeConfig = filepath.Join(homedir.HomeDir(), ".kube", "config")
+	} else {
+		kubeConfig = *kubernetesConfigFlags.KubeConfig
+	}
+	config, _ := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(
+		&clientcmd.ClientConfigLoadingRules{ExplicitPath: kubeConfig},
+		&clientcmd.ConfigOverrides{
+			CurrentContext: "",
+		}).RawConfig()
+	currentContext := config.CurrentContext
+
+	return currentContext
 }
