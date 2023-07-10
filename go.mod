@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/manifoldco/promptui v0.9.0
-	github.com/sashabaranov/go-openai v1.9.5
+	github.com/sashabaranov/go-openai v1.13.0
 	github.com/sethvargo/go-retry v0.2.4
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/pflag v1.0.5
