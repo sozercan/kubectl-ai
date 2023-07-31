@@ -20,14 +20,19 @@ type oaiClients struct {
 func newOAIClients() (oaiClients, error) {
 	var config openai.ClientConfig
 	config = openai.DefaultConfig(*openAIAPIKey)
-	config.BaseURL = *openAIBase
 
-	if *azureOpenAIEndpoint != "" {
-		config = openai.DefaultAzureConfig(*openAIAPIKey, *azureOpenAIEndpoint)
-		if len(*azureModelMap) != 0 {
-			config.AzureModelMapperFunc = func(model string) string {
-				return (*azureModelMap)[model]
+	if openAIEndpoint != &openaiAPIURLv1 {
+		// Azure OpenAI
+		if strings.Contains(*openAIEndpoint, "openai.azure.com") {
+			config = openai.DefaultAzureConfig(*openAIAPIKey, *openAIEndpoint)
+			if len(*azureModelMap) != 0 {
+				config.AzureModelMapperFunc = func(model string) string {
+					return (*azureModelMap)[model]
+				}
 			}
+		} else {
+			// Local AI
+			config.BaseURL = *openAIEndpoint
 		}
 	}
 
