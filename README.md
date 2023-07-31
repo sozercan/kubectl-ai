@@ -43,20 +43,15 @@ kubectl krew install kubectl-ai/kubectl-ai
 - [Azure OpenAI Service](https://aka.ms/azure-openai) API key and endpoint
 - [Local AI](https://github.com/go-skynet/LocalAI) (see [getting started](https://localai.io/basics/getting_started/index.html))
 
-For OpenAI, Azure OpenAI or Local AI, you can use the following environment variables:
+For OpenAI, Azure OpenAI or LocalAI, you can use the following environment variables:
 
 ```shell
 export OPENAI_API_KEY=<your OpenAI key>
 export OPENAI_DEPLOYMENT_NAME=<your OpenAI deployment/model name. defaults to "gpt-3.5-turbo-0301">
+export OPENAI_ENDPOINT=<your OpenAI endpoint, like "https://my-aoi-endpoint.openai.azure.com" or "http://localhost:8080/v1">
 ```
 
-For Azure OpenAI Service, you can use the following environment variables:
-
-```shell
-export AZURE_OPENAI_ENDPOINT=<your Azure OpenAI endpoint, like "https://my-aoi-endpoint.openai.azure.com">
-```
-
-If `AZURE_OPENAI_ENDPOINT` variable is set, then it will use the Azure OpenAI Service. Otherwise, it will use OpenAI API.
+If `OPENAI_ENDPOINT` variable is set, then it will use the endpoint. Otherwise, it will use OpenAI API.
 
 Azure OpenAI service does not allow certain characters, such as `.`, in the deployment name. Consequently, `kubectl-ai` will automatically replace `gpt-3.5-turbo` to `gpt-35-turbo` for Azure. However, if you use an Azure OpenAI deployment name completely different from the model name, you can set `AZURE_OPENAI_MAP` environment variable to map the model name to the Azure OpenAI deployment name. For example:
 
