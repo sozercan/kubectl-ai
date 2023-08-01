@@ -40,7 +40,7 @@ brews:
   - repository:
       owner: sozercan
       name: kubectl-ai
-      branch: chore-{{.Tag}}
+      branch: "chore-{{ .Tag }}"
       pull_request:
         enabled: true
     commit_author:
@@ -53,7 +53,7 @@ krews:
   - repository:
       owner: sozercan
       name: kubectl-ai
-      branch: chore-{{.Tag}}
+      branch: "chore-{{ .Tag }}"
       pull_request:
         enabled: true
     commit_author:
