@@ -37,7 +37,7 @@ checksum:
   algorithm: sha256
 
 brews:
-  - tap:
+  - repository:
       owner: sozercan
       name: kubectl-ai
       branch: chore-{{.Tag}}
@@ -50,7 +50,7 @@ brews:
     caveats: "This plugin requires an OpenAI key."
 
 krews:
-  - index:
+  - repository:
       owner: sozercan
       name: kubectl-ai
       branch: chore-{{.Tag}}
