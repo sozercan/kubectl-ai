@@ -7,7 +7,9 @@ import (
 	"os/signal"
 	"strconv"
 
+	"github.com/janeczku/go-spinner"
 	"github.com/manifoldco/promptui"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 	"github.com/walles/env"
@@ -32,6 +34,9 @@ var (
 	requireConfirmation  = flag.Bool("require-confirmation", env.GetOr("REQUIRE_CONFIRMATION", strconv.ParseBool, true), "Whether to require confirmation before executing the command. Defaults to true.")
 	temperature          = flag.Float64("temperature", env.GetOr("TEMPERATURE", env.WithBitSize(strconv.ParseFloat, 64), 0.0), "The temperature to use for the model. Range is between 0 and 1. Set closer to 0 if your want output to be more deterministic but less creative. Defaults to 0.0.")
 	raw                  = flag.Bool("raw", false, "Prints the raw YAML output immediately. Defaults to false.")
+	usek8sAPI            = flag.Bool("use-k8s-api", env.GetOr("USE_K8S_API", strconv.ParseBool, true), "Whether to use the Kubernetes API to create resources with function calling. Defaults to true.")
+	k8sOpenAPIURL        = flag.String("k8s-openapi-url", env.GetOr("K8S_OPENAPI_URL", env.String, "https://raw.githubusercontent.com/kubernetes/kubernetes/master/api/openapi-spec/swagger.json"), "The URL to the Kubernetes OpenAPI spec. Defaults to https://raw.githubusercontent.com/kubernetes/kubernetes/master/api/openapi-spec/swagger.json. Only used if use-k8s-api is true.")
+	debug                = flag.Bool("debug", env.GetOr("DEBUG", strconv.ParseBool, false), "Whether to print debug logs. Defaults to false.")
 )
 
 func InitAndExecute() {
@@ -52,6 +57,12 @@ func RootCmd() *cobra.Command {
 		Long:         "kubectl-ai is a plugin for kubectl that allows you to interact with OpenAI GPT API.",
 		Version:      version,
 		SilenceUsage: true,
+		PersistentPreRun: func(cmd *cobra.Command, args []string) {
+			if *debug {
+				log.SetLevel(log.DebugLevel)
+				printDebugFlags()
+			}
+		},
 		RunE: func(_ *cobra.Command, args []string) error {
 			if len(args) == 0 {
 				return fmt.Errorf("prompt must be provided")
@@ -71,6 +82,15 @@ func RootCmd() *cobra.Command {
 	return cmd
 }
 
+func printDebugFlags() {
+	log.Debugf("openai-endpoint: %s", *openAIEndpoint)
+	log.Debugf("openai-deployment-name: %s", *openAIDeploymentName)
+	log.Debugf("azure-openai-map: %s", *azureModelMap)
+	log.Debugf("temperature: %f", *temperature)
+	log.Debugf("use-k8s-api: %t", *usek8sAPI)
+	log.Debugf("k8s-openapi-url: %s", *k8sOpenAPIURL)
+}
+
 func run(args []string) error {
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer cancel()
@@ -83,15 +103,25 @@ func run(args []string) error {
 	var action, completion string
 	for action != apply {
 		args = append(args, action)
+
+		s := spinner.NewSpinner("Processing...")
+		if !*debug && !*raw {
+			s.SetCharset([]string{"⣾", "⣽", "⣻", "⢿", "⡿", "⣟", "⣯", "⣷"})
+			s.Start()
+		}
+
 		completion, err = gptCompletion(ctx, oaiClients, args, *openAIDeploymentName)
 		if err != nil {
 			return err
 		}
 
+		s.Stop()
+
 		if *raw {
 			fmt.Println(completion)
 			return nil
 		}
+
 		text := fmt.Sprintf("✨ Attempting to apply the following manifest:\n%s", completion)
 		fmt.Println(text)
 

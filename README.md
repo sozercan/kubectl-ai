@@ -65,6 +65,14 @@ export AZURE_OPENAI_MAP="gpt-3.5-turbo=my-deployment"
 
 - `--temperature` flag or `TEMPERATURE` environment variable can be set between 0 and 1. Higher temperature will result in more creative completions. Lower temperature will result in more deterministic completions. Defaults to 0.
 
+- `--use-k8s-api` flag or `USE_K8S_API` environment variable can be set to use Kubernetes OpenAPI Spec to generate the manifest. This will result in very accurate completions, but will use more API calls. Defaults to false.
+
+- `--k8s-openapi-url` flag or `K8S_OPENAPI_URL` environment variable can be set to use a custom Kubernetes OpenAPI Spec URL. Defaults to https://raw.githubusercontent.com/kubernetes/kubernetes/master/api/openapi-spec/swagger.json. This is only used if `--use-k8s-api` is set. If you would like to generate Kubernetes YAML completions that includes custom resource definitions (CRDs), you can generate OpenAPI Spec by using:
+
+```shell
+kubectl get --raw /openapi/v2 > swagger.json
+```
+
 ### Use with external editors
 
 If you want to use an external editor to edit the generated manifest, you can set the `--raw` flag and pipe to the editor of your choice. For example:
