@@ -3,9 +3,11 @@ module github.com/sozercan/kubectl-ai
 go 1.20
 
 require (
+	github.com/janeczku/go-spinner v0.0.0-20150530144529-cf8ef1d64394
 	github.com/manifoldco/promptui v0.9.0
 	github.com/sashabaranov/go-openai v1.14.1
 	github.com/sethvargo/go-retry v0.2.4
+	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/pflag v1.0.5
 	github.com/walles/env v0.0.4
@@ -49,6 +51,7 @@ require (
 	github.com/stretchr/testify v1.8.3 // indirect
 	github.com/xlab/treeprint v1.1.0 // indirect
 	go.starlark.net v0.0.0-20200306205701-8dd3e2ee1dd5 // indirect
+	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9 // indirect
 	golang.org/x/net v0.10.0 // indirect
 	golang.org/x/oauth2 v0.0.0-20221014153046-6fdb5e3db783 // indirect
 	golang.org/x/sys v0.8.0 // indirect

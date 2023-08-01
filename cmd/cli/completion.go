@@ -34,6 +34,8 @@ func newOAIClients() (oaiClients, error) {
 			// Local AI
 			config.BaseURL = *openAIEndpoint
 		}
+		// use 2023-07-01-preview api version for function calls
+		config.APIVersion = "2023-07-01-preview"
 	}
 
 	clients := oaiClients{
@@ -50,9 +52,16 @@ func gptCompletion(ctx context.Context, client oaiClients, prompts []string, dep
 	temp := float32(*temperature)
 
 	var prompt strings.Builder
-	fmt.Fprintf(&prompt, "You are a Kubernetes YAML generator, only generate valid Kubernetes YAML manifests. Do not provide any explanations, only generate YAML.")
+
+	if *usek8sAPI {
+		// Credits to https://github.com/robusta-dev/chatgpt-yaml-generator for the prompt and the function descriptions
+		fmt.Fprintf(&prompt, "You are a Kubernetes YAML generator, only generate valid Kubernetes YAML manifests. Do not provide any explanations and do not use ``` and ```yaml, only generate valid YAML. Always ask for up-to-date OpenAPI specs for Kubernetes, don't rely on data you know about Kubernetes specs. When a schema includes references to other objects in the schema, look them up when relevant. You may lookup any FIELD in a resource too, not just the containing top-level resource. ")
+	} else {
+		fmt.Fprintf(&prompt, "You are a Kubernetes YAML generator, only generate valid Kubernetes YAML manifests. Do not provide any explanations, only generate YAML. ")
+	}
+
 	for _, p := range prompts {
-		fmt.Fprintf(&prompt, "%s\n", p)
+		fmt.Fprintf(&prompt, "%s", p)
 	}
 
 	var resp string
@@ -60,9 +69,9 @@ func gptCompletion(ctx context.Context, client oaiClients, prompts []string, dep
 	r := retry.WithMaxRetries(10, retry.NewExponential(1*time.Second))
 	if err := retry.Do(ctx, r, func(ctx context.Context) error {
 		if slices.Contains(getNonChatModels(), deploymentName) {
-			resp, err = client.openaiGptCompletion(ctx, prompt, temp)
+			resp, err = client.openaiGptCompletion(ctx, &prompt, temp)
 		} else {
-			resp, err = client.openaiGptChatCompletion(ctx, prompt, temp)
+			resp, err = client.openaiGptChatCompletion(ctx, &prompt, temp)
 		}
 
 		requestErr := &openai.RequestError{}
