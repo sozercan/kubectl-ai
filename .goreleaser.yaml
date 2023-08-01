@@ -43,6 +43,10 @@ brews:
       branch: "chore-{{ .Tag }}"
       pull_request:
         enabled: true
+        base:
+          owner: sozercan
+          name: kubectl-ai
+          branch: main
     commit_author:
       name: Sertac Ozercan
       email: sozercan@gmail.com
@@ -56,6 +60,10 @@ krews:
       branch: "chore-{{ .Tag }}"
       pull_request:
         enabled: true
+        base:
+          owner: sozercan
+          name: kubectl-ai
+          branch: main
     commit_author:
       name: Sertac Ozercan
       email: sozercan@gmail.com
