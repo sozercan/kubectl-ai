@@ -1,27 +1,40 @@
 package cli
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"io"
 	"net/http"
+	"os/exec"
 	"strings"
 
 	log "github.com/sirupsen/logrus"
 )
 
 func fetchK8sSchema() (map[string]interface{}, error) {
-	log.Debugf("Fetching schema from %s", *k8sOpenAPIURL)
-	// TODO: we should cache this or read from a local file
-	response, err := http.Get(*k8sOpenAPIURL)
-	if err != nil {
-		return nil, err
-	}
-	defer response.Body.Close()
+	var body []byte
+	var err error
+	if *k8sOpenAPIURL == "" {
+		log.Debugf("Fetching schema from kubernetes api server")
+		// TODO: can we use kube discovery cache here?
+		body, err = runKubectlCommand("get", "--raw", "/openapi/v2")
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		// TODO: we should cache this or read from a local file
+		log.Debugf("Fetching schema from %s", *k8sOpenAPIURL)
+		response, err := http.Get(*k8sOpenAPIURL)
+		if err != nil {
+			return nil, err
+		}
+		defer response.Body.Close()
 
-	body, err := io.ReadAll(response.Body)
-	if err != nil {
-		return nil, err
+		body, err = io.ReadAll(response.Body)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	var schema map[string]interface{}
@@ -79,4 +92,15 @@ func fetchSchemaForResource(resourceType string) (map[string]interface{}, error)
 	}
 
 	return nil, nil
+}
+
+func runKubectlCommand(args ...string) ([]byte, error) {
+	cmd := exec.Command("kubectl", args...)
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	err := cmd.Run()
+	if err != nil {
+		return nil, err
+	}
+	return out.Bytes(), nil
 }

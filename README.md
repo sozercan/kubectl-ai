@@ -65,13 +65,9 @@ export AZURE_OPENAI_MAP="gpt-3.5-turbo=my-deployment"
 
 - `--temperature` flag or `TEMPERATURE` environment variable can be set between 0 and 1. Higher temperature will result in more creative completions. Lower temperature will result in more deterministic completions. Defaults to 0.
 
-- `--use-k8s-api` flag or `USE_K8S_API` environment variable can be set to use Kubernetes OpenAPI Spec to generate the manifest. This will result in very accurate completions, but will use more API calls. Defaults to false.
+- `--use-k8s-api` flag or `USE_K8S_API` environment variable can be set to use Kubernetes OpenAPI Spec to generate the manifest. This will result in very accurate completions including CRDs (if present in configured cluster). This setting will use more OpenAI API calls. Defaults to false.
 
-- `--k8s-openapi-url` flag or `K8S_OPENAPI_URL` environment variable can be set to use a custom Kubernetes OpenAPI Spec URL. Defaults to https://raw.githubusercontent.com/kubernetes/kubernetes/master/api/openapi-spec/swagger.json. This is only used if `--use-k8s-api` is set. If you would like to generate Kubernetes YAML completions that includes custom resource definitions (CRDs), you can generate OpenAPI Spec by using:
-
-```shell
-kubectl get --raw /openapi/v2 > swagger.json
-```
+- `--k8s-openapi-url` flag or `K8S_OPENAPI_URL` environment variable can be set to use a custom Kubernetes OpenAPI Spec URL. This is only used if `--use-k8s-api` is set. By default, `kubectl-ai` will use the configured Kubernetes API Server to get the spec unless this setting is configured. You can use the [default Kubernetes OpenAPI Spec](https://raw.githubusercontent.com/kubernetes/kubernetes/master/api/openapi-spec/swagger.json) or generate a custom spec for completions that includes custom resource definitions (CRDs). You can generate custom OpenAPI Spec by using `kubectl get --raw /openapi/v2 > swagger.json`.
 
 ### Use with external editors
 
