@@ -21,13 +21,7 @@ import (
 const defaultNamespace = "default"
 
 func applyManifest(completion string) error {
-	var kubeConfig string
-	if *kubernetesConfigFlags.KubeConfig == "" {
-		kubeConfig = filepath.Join(homedir.HomeDir(), ".kube", "config")
-	} else {
-		kubeConfig = *kubernetesConfigFlags.KubeConfig
-	}
-
+	kubeConfig := getKubeConfig()
 	config, err := clientcmd.BuildConfigFromFlags("", kubeConfig)
 	if err != nil {
 		return err
@@ -107,4 +101,14 @@ func applyManifest(completion string) error {
 		}
 	}
 	return nil
+}
+
+func getKubeConfig() string {
+	var kubeConfig string
+	if *kubernetesConfigFlags.KubeConfig == "" {
+		kubeConfig = filepath.Join(homedir.HomeDir(), ".kube", "config")
+	} else {
+		kubeConfig = *kubernetesConfigFlags.KubeConfig
+	}
+	return kubeConfig
 }

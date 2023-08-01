@@ -18,7 +18,8 @@ func fetchK8sSchema() (map[string]interface{}, error) {
 	if *k8sOpenAPIURL == "" {
 		log.Debugf("Fetching schema from kubernetes api server")
 		// TODO: can we use kube discovery cache here?
-		body, err = runKubectlCommand("get", "--raw", "/openapi/v2")
+		kubeConfig := getKubeConfig()
+		body, err = runKubectlCommand("get", "--raw", "/openapi/v2", "--kubeconfig", kubeConfig)
 		if err != nil {
 			return nil, err
 		}
