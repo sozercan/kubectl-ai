@@ -3,6 +3,8 @@ package cli
 import (
 	"bytes"
 	"context"
+	"path/filepath"
+
 	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
@@ -13,8 +15,8 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/restmapper"
 	"k8s.io/client-go/tools/clientcmd"
+	"k8s.io/client-go/tools/clientcmd/api"
 	"k8s.io/client-go/util/homedir"
-	"path/filepath"
 )
 
 const defaultNamespace = "default"
@@ -38,11 +40,7 @@ func applyManifest(completion string) error {
 
 	var namespace string
 	if *kubernetesConfigFlags.Namespace == "" {
-		clientConfig, err := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(
-			&clientcmd.ClientConfigLoadingRules{ExplicitPath: kubeConfig},
-			&clientcmd.ConfigOverrides{
-				CurrentContext: "",
-			}).RawConfig()
+		clientConfig, err := getConfig(kubeConfig)
 		if err != nil {
 			return err
 		}
@@ -102,20 +100,38 @@ func applyManifest(completion string) error {
 	return nil
 }
 
-func getCurrentContextName() string {
-
+func getKubeConfig() string {
 	var kubeConfig string
 	if *kubernetesConfigFlags.KubeConfig == "" {
 		kubeConfig = filepath.Join(homedir.HomeDir(), ".kube", "config")
 	} else {
 		kubeConfig = *kubernetesConfigFlags.KubeConfig
 	}
-	config, _ := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(
+	return kubeConfig
+}
+
+func getConfig(kubeConfig string) (api.Config, error) {
+	config, err := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(
 		&clientcmd.ClientConfigLoadingRules{ExplicitPath: kubeConfig},
 		&clientcmd.ConfigOverrides{
 			CurrentContext: "",
 		}).RawConfig()
+
+	if err != nil {
+		return api.Config{}, err
+	}
+
+	return config, nil
+}
+
+func getCurrentContextName() (string, error) {
+	var kubeConfig string = getKubeConfig()
+	config, err := getConfig(kubeConfig)
+
+	if err != nil {
+		return "", err
+	}
 	currentContext := config.CurrentContext
 
-	return currentContext
+	return currentContext, nil
 }
