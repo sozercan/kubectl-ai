@@ -116,7 +116,6 @@ func getConfig(kubeConfig string) (api.Config, error) {
 		&clientcmd.ConfigOverrides{
 			CurrentContext: "",
 		}).RawConfig()
-
 	if err != nil {
 		return api.Config{}, err
 	}
@@ -125,9 +124,8 @@ func getConfig(kubeConfig string) (api.Config, error) {
 }
 
 func getCurrentContextName() (string, error) {
-	var kubeConfig string = getKubeConfig()
+	kubeConfig := getKubeConfig()
 	config, err := getConfig(kubeConfig)
-
 	if err != nil {
 		return "", err
 	}
