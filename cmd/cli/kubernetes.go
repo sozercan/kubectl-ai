@@ -15,6 +15,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/restmapper"
 	"k8s.io/client-go/tools/clientcmd"
+	"k8s.io/client-go/tools/clientcmd/api"
 	"k8s.io/client-go/util/homedir"
 )
 
@@ -39,11 +40,7 @@ func applyManifest(completion string) error {
 
 	var namespace string
 	if *kubernetesConfigFlags.Namespace == "" {
-		clientConfig, err := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(
-			&clientcmd.ClientConfigLoadingRules{ExplicitPath: kubeConfig},
-			&clientcmd.ConfigOverrides{
-				CurrentContext: "",
-			}).RawConfig()
+		clientConfig, err := getConfig(kubeConfig)
 		if err != nil {
 			return err
 		}
@@ -111,4 +108,28 @@ func getKubeConfig() string {
 		kubeConfig = *kubernetesConfigFlags.KubeConfig
 	}
 	return kubeConfig
+}
+
+func getConfig(kubeConfig string) (api.Config, error) {
+	config, err := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(
+		&clientcmd.ClientConfigLoadingRules{ExplicitPath: kubeConfig},
+		&clientcmd.ConfigOverrides{
+			CurrentContext: "",
+		}).RawConfig()
+	if err != nil {
+		return api.Config{}, err
+	}
+
+	return config, nil
+}
+
+func getCurrentContextName() (string, error) {
+	kubeConfig := getKubeConfig()
+	config, err := getConfig(kubeConfig)
+	if err != nil {
+		return "", err
+	}
+	currentContext := config.CurrentContext
+
+	return currentContext, nil
 }

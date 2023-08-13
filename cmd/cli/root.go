@@ -147,7 +147,11 @@ func userActionPrompt() (string, error) {
 	var result string
 	var err error
 	items := []string{apply, dontApply}
-	label := fmt.Sprintf("Would you like to apply this? [%s/%s/%s]", reprompt, apply, dontApply)
+	currentContext, err := getCurrentContextName()
+	label := fmt.Sprintf("Would you like to apply this? [%[1]s/%[2]s/%[3]s]", reprompt, apply, dontApply)
+	if err == nil {
+		label = fmt.Sprintf("(context: %[1]s) %[2]s", currentContext, label)
+	}
 
 	prompt := promptui.SelectWithAdd{
 		Label:    label,
