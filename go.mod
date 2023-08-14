@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/janeczku/go-spinner v0.0.0-20150530144529-cf8ef1d64394
 	github.com/manifoldco/promptui v0.9.0
-	github.com/sashabaranov/go-openai v1.14.1
+	github.com/sashabaranov/go-openai v1.14.2
 	github.com/sethvargo/go-retry v0.2.4
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/cobra v1.7.0
