@@ -2,18 +2,12 @@ run:
   timeout: 5m
 
 linters-settings:
-  # gocritic:
-  #   enabled-tags:
-  #   - performance
-  importas:
-    no-unaliased: true
   lll:
     line-length: 200
-
   misspell:
     locale: US
   staticcheck:
-    go: "1.20"
+    go: "1.21"
 
 linters:
   disable-all: true
@@ -32,10 +26,9 @@ linters:
     - gosec
     - gosimple
     - govet
-    - importas
     - ineffassign
     - misspell
-    - revive # replacement for golint
+    - revive
     - staticcheck
     - typecheck
     - unconvert

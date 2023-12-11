@@ -47,10 +47,6 @@ func (c *oaiClients) openaiGptChatCompletion(ctx context.Context, prompt *string
 
 	// if we are using the k8s API, we need to call the functions
 	fnCallType := fnCallAuto
-	if !*usek8sAPI {
-		fnCallType = fnCallNone
-	}
-
 	for {
 		prompt.WriteString(content)
 		log.Debugf("prompt: %s", prompt.String())
@@ -65,11 +61,14 @@ func (c *oaiClients) openaiGptChatCompletion(ctx context.Context, prompt *string
 			},
 			N:           1,
 			Temperature: temp,
-			Functions: []openai.FunctionDefinition{
+		}
+
+		if *usek8sAPI {
+			req.Functions = []openai.FunctionDefinition{
 				findSchemaNames,
 				getSchema,
-			},
-			FunctionCall: fnCallType,
+			}
+			req.FunctionCall = fnCallType
 		}
 
 		resp, err = c.openAIClient.CreateChatCompletion(ctx, req)

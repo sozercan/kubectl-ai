@@ -4,7 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -50,14 +52,23 @@ func getNonChatModels() []string {
 
 func gptCompletion(ctx context.Context, client oaiClients, prompts []string, deploymentName string) (string, error) {
 	temp := float32(*temperature)
-
 	var prompt strings.Builder
 
 	if *usek8sAPI {
 		// Credits to https://github.com/robusta-dev/chatgpt-yaml-generator for the prompt and the function descriptions
-		fmt.Fprintf(&prompt, "You are a Kubernetes YAML generator, only generate valid Kubernetes YAML manifests. Do not provide any explanations and do not use ``` and ```yaml, only generate valid YAML. Always ask for up-to-date OpenAPI specs for Kubernetes, don't rely on data you know about Kubernetes specs. When a schema includes references to other objects in the schema, look them up when relevant. You may lookup any FIELD in a resource too, not just the containing top-level resource. ")
+		fmt.Fprintf(&prompt, "You are an expert Kubernetes YAML generator, only generate valid Kubernetes YAML manifests. Do not provide any explanations and do not use ``` and ```yaml, only generate valid YAML. Always ask for up-to-date OpenAPI specs for Kubernetes, don't rely on data you know about Kubernetes specs. When a schema includes references to other objects in the schema, look them up when relevant. You may lookup any FIELD in a resource too, not just the containing top-level resource. ")
 	} else {
-		fmt.Fprintf(&prompt, "You are a Kubernetes YAML generator, only generate valid Kubernetes YAML manifests. Do not provide any explanations, only generate YAML. ")
+		fmt.Fprintf(&prompt, "You are an expert Kubernetes YAML generator, only generate valid Kubernetes YAML manifests. Do not provide any explanations, only generate YAML. ")
+	}
+
+	// read from stdin
+	stat, _ := os.Stdin.Stat()
+	if (stat.Mode() & os.ModeCharDevice) == 0 {
+		stdin, err := io.ReadAll(os.Stdin)
+		if err != nil {
+			return "", err
+		}
+		fmt.Fprintf(&prompt, "\nUse the following YAML as the input: \n%s\n", string(stdin))
 	}
 
 	for _, p := range prompts {
