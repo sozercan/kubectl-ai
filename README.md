@@ -41,9 +41,9 @@ kubectl krew install kubectl-ai/kubectl-ai
 
 - [OpenAI API key](https://platform.openai.com/overview)
 - [Azure OpenAI Service](https://aka.ms/azure-openai) API key and endpoint
-- [Local AI](https://github.com/go-skynet/LocalAI) (see [getting started](https://localai.io/basics/getting_started/index.html))
+- OpenAI API-compatible endpoint (such as [AIKit](https://github.com/sozercan/aikit) or [LocalAI](https://localai.io/))
 
-For OpenAI, Azure OpenAI or LocalAI, you can use the following environment variables:
+For OpenAI, Azure OpenAI or OpenAI API compatible endpoint, you can use the following environment variables:
 
 ```shell
 export OPENAI_API_KEY=<your OpenAI key>
