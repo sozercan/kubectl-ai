@@ -57,7 +57,7 @@ func RootCmd() *cobra.Command {
 		Long:         "kubectl-ai is a plugin for kubectl that allows you to interact with OpenAI GPT API.",
 		Version:      version,
 		SilenceUsage: true,
-		PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		PersistentPreRun: func(_ *cobra.Command, _ []string) {
 			if *debug {
 				log.SetLevel(log.DebugLevel)
 				printDebugFlags()
@@ -110,7 +110,7 @@ func run(args []string) error {
 			s.Start()
 		}
 
-		completion, err = gptCompletion(ctx, oaiClients, args, *openAIDeploymentName)
+		completion, err = gptCompletion(ctx, oaiClients, args)
 		if err != nil {
 			return err
 		}
