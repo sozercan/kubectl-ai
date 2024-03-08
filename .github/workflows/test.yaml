@@ -30,7 +30,6 @@ jobs:
       - name: build binary
         run: |
           make bin
-          mv bin/kubectl-ai ${GITHUB_WORKSPACE}/bin
 
       - name: create kind cluster
         run: |
