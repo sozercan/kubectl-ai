@@ -110,7 +110,7 @@ func run(args []string) error {
 			s.Start()
 		}
 
-		completion, err = gptCompletion(ctx, oaiClients, args, *openAIDeploymentName)
+		completion, err = gptCompletion(ctx, oaiClients, args)
 		if err != nil {
 			return err
 		}

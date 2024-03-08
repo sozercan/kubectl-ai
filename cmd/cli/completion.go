@@ -43,7 +43,7 @@ func newOAIClients() (oaiClients, error) {
 	return clients, nil
 }
 
-func gptCompletion(ctx context.Context, client oaiClients, prompts []string, deploymentName string) (string, error) {
+func gptCompletion(ctx context.Context, client oaiClients, prompts []string) (string, error) {
 	temp := float32(*temperature)
 
 	var prompt strings.Builder
