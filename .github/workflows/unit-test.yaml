@@ -1,0 +1,36 @@
+name: unit-test
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+
+permissions: read-all
+
+jobs:
+  unit-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-go@v4
+        with:
+          go-version: "1.20"
+
+      - name: go mod tidy
+        run: |
+          go mod tidy
+          git diff --exit-code
+
+      - name: test
+        run: make test
+
+      - name: build
+        run: make bin
