@@ -27,19 +27,23 @@ jobs:
         run: |
           make test-e2e-dependencies
 
-      - name: build
-        run: make bin
+      - name: build binary
+        run: |
+          make bin
+          mv bin/kubectl-ai ${GITHUB_WORKSPACE}/bin
+
+      - name: create kind cluster
+        run: |
+          # used to retrieve the k8s api for fn-call and apply the manifest
+          kind create cluster
 
       - name: run tests
         shell: bash
         run: |
           if [[ ${{ matrix.options }} == 'fn-call' ]]; then
             FN_CALL="--use-k8s-api"
-            # used to retrieve the k8s api
-            kind create cluster
           fi
-
-          bin/kubectl-ai "create an nginx deployment with 3 replicas" --require-confirmation=false ${FN_CALL}
+          kubectl ai "create an nginx deployment with 3 replicas" --require-confirmation=false ${FN_CALL}
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OPENAI_DEPLOYMENT_NAME: ${{ secrets.OPENAI_DEPLOYMENT_NAME }}
