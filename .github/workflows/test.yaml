@@ -23,7 +23,6 @@ jobs:
           go-version: "1.22"
 
       - name: setup test dependencies
-        if: matrix.options == 'fn-call'
         run: |
           make test-e2e-dependencies
 
