@@ -1,0 +1,38 @@
+name: Bug Report
+description: Report a bug in Kubectl AI
+title: "[BUG] <title>"
+labels:
+  - "bug"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please search to see if an issue already exists for your bug before continuing.
+        > If you need to report a security issue please see https://github.com/sozercan/kubectl-ai/security/policy instead.
+  - type: textarea
+    attributes:
+      label: Expected Behavior
+      description: Briefly describe what you expect to happen.
+  - type: textarea
+    attributes:
+      label: Actual Behavior
+      description: Briefly describe what is actually happening.
+  - type: textarea
+    attributes:
+      label: Steps To Reproduce
+      description: Detailed steps to reproduce the behavior.
+      placeholder: |
+        1. In ...
+        2. With this config...
+        3. Run '...'
+        4. See error...
+  - type: checkboxes
+    id: idea
+    attributes:
+      label: "Are you willing to submit PRs to contribute to this bug fix?"
+      options:
+        - label: Yes, I am willing to implement it.
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out a bug report!
