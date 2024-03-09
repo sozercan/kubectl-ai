@@ -78,7 +78,8 @@ func gptCompletion(ctx context.Context, client oaiClients, prompts []string) (st
 
 		requestErr := &openai.RequestError{}
 		if errors.As(err, &requestErr) {
-			if requestErr.HTTPStatusCode == http.StatusTooManyRequests {
+			switch requestErr.HTTPStatusCode {
+			case http.StatusTooManyRequests, http.StatusInternalServerError, http.StatusServiceUnavailable:
 				return retry.RetryableError(err)
 			}
 		}
