@@ -5,20 +5,20 @@
 class KubectlAi < Formula
   desc "kubectl-ai is a kubectl plugin to generate and apply Kubernetes manifests using OpenAI GPT."
   homepage ""
-  version "0.0.11"
+  version "0.0.12"
 
   on_macos do
     if Hardware::CPU.arm?
-      url "https://github.com/sozercan/kubectl-ai/releases/download/v0.0.11/kubectl-ai_darwin_arm64.tar.gz"
-      sha256 "446b8f163bb61682bb6f44770a742637209a884c094a6a4f61294f6cd8c226d1"
+      url "https://github.com/sozercan/kubectl-ai/releases/download/v0.0.12/kubectl-ai_darwin_arm64.tar.gz"
+      sha256 "4adc6afb513bb3849e30d2900d5eda513c144973eec48a4ac6ee3e5d8293769f"
 
       def install
         bin.install "kubectl-ai"
       end
     end
     if Hardware::CPU.intel?
-      url "https://github.com/sozercan/kubectl-ai/releases/download/v0.0.11/kubectl-ai_darwin_amd64.tar.gz"
-      sha256 "2ee5ae161b2705aa6e382a08fa614238ad1b33f2b71be8482aac377cdecc7c8b"
+      url "https://github.com/sozercan/kubectl-ai/releases/download/v0.0.12/kubectl-ai_darwin_amd64.tar.gz"
+      sha256 "d2efe829420487d4772adda8319ae74111cf2d6b40cd52ffe873ec4011544d32"
 
       def install
         bin.install "kubectl-ai"
@@ -27,17 +27,17 @@ class KubectlAi < Formula
   end
 
   on_linux do
-    if Hardware::CPU.arm? && Hardware::CPU.is_64_bit?
-      url "https://github.com/sozercan/kubectl-ai/releases/download/v0.0.11/kubectl-ai_linux_arm64.tar.gz"
-      sha256 "158eca02fab65556808724e99e4f5922bd0c34105c100950458fb9a7faf1107c"
+    if Hardware::CPU.intel?
+      url "https://github.com/sozercan/kubectl-ai/releases/download/v0.0.12/kubectl-ai_linux_amd64.tar.gz"
+      sha256 "6f390023a8fe46a5237a15e934be3189230896dff64bc2a49cf4c8f1df59d690"
 
       def install
         bin.install "kubectl-ai"
       end
     end
-    if Hardware::CPU.intel?
-      url "https://github.com/sozercan/kubectl-ai/releases/download/v0.0.11/kubectl-ai_linux_amd64.tar.gz"
-      sha256 "b991b085a59a47f6ccd0f4a907c8c082c449acadf2553938a7edf36522f6daf4"
+    if Hardware::CPU.arm? && Hardware::CPU.is_64_bit?
+      url "https://github.com/sozercan/kubectl-ai/releases/download/v0.0.12/kubectl-ai_linux_arm64.tar.gz"
+      sha256 "2a8897c4b0fca40a1e980abf489713de024ae80a93c247afd39697c5b42edf59"
 
       def install
         bin.install "kubectl-ai"
