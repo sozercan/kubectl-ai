@@ -69,7 +69,21 @@ export AZURE_OPENAI_MAP="gpt-3.5-turbo=my-deployment"
 
 - `--k8s-openapi-url` flag or `K8S_OPENAPI_URL` environment variable can be set to use a custom Kubernetes OpenAPI Spec URL. This is only used if `--use-k8s-api` is set. By default, `kubectl-ai` will use the configured Kubernetes API Server to get the spec unless this setting is configured. You can use the [default Kubernetes OpenAPI Spec](https://raw.githubusercontent.com/kubernetes/kubernetes/master/api/openapi-spec/swagger.json) or generate a custom spec for completions that includes custom resource definitions (CRDs). You can generate custom OpenAPI Spec by using `kubectl get --raw /openapi/v2 > swagger.json`.
 
-### Use with external editors
+### Pipe Input and Output
+
+Kubectl AI can be used with pipe input and output. For example:
+
+```shell
+$ cat foo-deployment.yaml | kubectl ai "change replicas to 5" --raw | kubectl apply -f -
+```
+
+#### Save to file
+
+```shell
+$ cat foo-deployment.yaml | kubectl ai "change replicas to 5" --raw > my-deployment-updated.yaml
+```
+
+#### Use with external editors
 
 If you want to use an external editor to edit the generated manifest, you can set the `--raw` flag and pipe to the editor of your choice. For example:
 
