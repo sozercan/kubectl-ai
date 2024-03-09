@@ -7,7 +7,7 @@ linters-settings:
   misspell:
     locale: US
   staticcheck:
-    go: "1.21"
+    go: "1.22"
 
 linters:
   disable-all: true

@@ -12,7 +12,6 @@ import (
 
 	openai "github.com/sashabaranov/go-openai"
 	"github.com/sethvargo/go-retry"
-	"golang.org/x/exp/slices"
 )
 
 type oaiClients struct {
@@ -36,8 +35,8 @@ func newOAIClients() (oaiClients, error) {
 			// Local AI
 			config.BaseURL = *openAIEndpoint
 		}
-		// use 2023-07-01-preview api version for function calls
-		config.APIVersion = "2023-07-01-preview"
+		// use at least 2023-07-01-preview api version for function calls
+		config.APIVersion = "2024-03-01-preview"
 	}
 
 	clients := oaiClients{
@@ -46,11 +45,7 @@ func newOAIClients() (oaiClients, error) {
 	return clients, nil
 }
 
-func getNonChatModels() []string {
-	return []string{"code-davinci-002", "text-davinci-003"}
-}
-
-func gptCompletion(ctx context.Context, client oaiClients, prompts []string, deploymentName string) (string, error) {
+func gptCompletion(ctx context.Context, client oaiClients, prompts []string) (string, error) {
 	temp := float32(*temperature)
 	var prompt strings.Builder
 
@@ -79,11 +74,7 @@ func gptCompletion(ctx context.Context, client oaiClients, prompts []string, dep
 	var err error
 	r := retry.WithMaxRetries(10, retry.NewExponential(1*time.Second))
 	if err := retry.Do(ctx, r, func(ctx context.Context) error {
-		if slices.Contains(getNonChatModels(), deploymentName) {
-			resp, err = client.openaiGptCompletion(ctx, &prompt, temp)
-		} else {
-			resp, err = client.openaiGptChatCompletion(ctx, &prompt, temp)
-		}
+		resp, err = client.openaiGptChatCompletion(ctx, &prompt, temp)
 
 		requestErr := &openai.RequestError{}
 		if errors.As(err, &requestErr) {
