@@ -160,6 +160,12 @@ func userActionPrompt() (string, error) {
 	}
 	_, result, err = prompt.Run()
 	if err != nil {
+		// workaround for bug in promptui when input is piped in from stdin
+		// however, this will not block for ui input
+		// for now, we will not apply the yaml, but user can pipe to input to kubectl
+		if err.Error() == "^D" {
+			return dontApply, nil
+		}
 		return dontApply, err
 	}
 

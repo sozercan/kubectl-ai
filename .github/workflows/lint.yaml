@@ -28,8 +28,17 @@ jobs:
       - uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
         with:
           go-version: "1.22"
+          check-latest: true
+
+      - name: download
+        run: |
+          wget https://github.com/golangci/golangci-lint/releases/download/v${GOLANGCI_LINT_VERSION}/golangci-lint-${GOLANGCI_LINT_VERSION}-linux-amd64.tar.gz
+          tar -xzf golangci-lint-${GOLANGCI_LINT_VERSION}-linux-amd64.tar.gz
+          sudo mv golangci-lint-${GOLANGCI_LINT_VERSION}-linux-amd64/golangci-lint /usr/local/bin/
+        env:
+          GOLANGCI_LINT_VERSION: 1.56.2
 
       - name: lint
-        uses: golangci/golangci-lint-action@3a919529898de77ec3da873e3063ca4b10e7f5cc # v3.7.0
-        with:
-          version: v1.56.2
+        run: |
+          golangci-lint version
+          golangci-lint run -v ./...
