@@ -44,11 +44,12 @@ func (c *oaiClients) openaiGptChatCompletion(ctx context.Context, prompt *string
 		}
 
 		if *usek8sAPI {
-			req.Functions = []openai.FunctionDefinition{
+			// TODO: migrate to tools api
+			req.Functions = []openai.FunctionDefinition{ // nolint:staticcheck
 				findSchemaNames,
 				getSchema,
 			}
-			req.FunctionCall = fnCallType
+			req.FunctionCall = fnCallType // nolint:staticcheck
 		}
 
 		resp, err = c.openAIClient.CreateChatCompletion(ctx, req)
