@@ -63,7 +63,7 @@ func gptCompletion(ctx context.Context, client oaiClients, prompts []string) (st
 		if err != nil {
 			return "", err
 		}
-		fmt.Fprintf(&prompt, "\nUse the following YAML as the input: \n%s\n", string(stdin))
+		fmt.Fprintf(&prompt, "\nDepending on the input, either edit or append to the input YAML. Do not generate new YAML without including the input YAML either original or edited.\nUse the following YAML as the input: \n%s\n", string(stdin))
 	}
 
 	for _, p := range prompts {

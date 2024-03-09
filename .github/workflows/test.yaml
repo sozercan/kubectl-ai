@@ -29,14 +29,17 @@ jobs:
           check-latest: true
 
       - name: setup test dependencies
+        shell: bash
         run: |
           make test-e2e-dependencies
 
       - name: build binary
+        shell: bash
         run: |
           make bin
 
       - name: create kind cluster
+        shell: bash
         run: |
           # used to retrieve the k8s api for fn-call and apply the manifest
           kind create cluster
@@ -47,12 +50,44 @@ jobs:
           if [[ ${{ matrix.options }} == 'fn-call' ]]; then
             FN_CALL="--use-k8s-api"
           fi
-          kubectl ai "create an nginx deployment with 3 replicas" --require-confirmation=false ${FN_CALL}
+          kubectl ai "create a deployment called 'nginx-deployment' with image as docker.io/library/nginx:latest and 'app: nginx' as selector with 2 replicas" --require-confirmation=false ${FN_CALL}
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OPENAI_DEPLOYMENT_NAME: ${{ secrets.OPENAI_DEPLOYMENT_NAME }}
           OPENAI_ENDPOINT: ${{ secrets.OPENAI_ENDPOINT }}
 
-      - run: |
-          kubectl get deployments
-          kubectl get pods
+      - name: validate deployment
+        shell: bash
+        run: |
+          set -x
+          kubectl rollout status deployment nginx-deployment
+          kubectl wait --for=condition=available --timeout=5m deployment/nginx-deployment
+
+      - name: test input and output
+        shell: bash
+        run: |
+          kubectl get deployments nginx-deployment -o yaml | kubectl ai "create a service called nginx-svc that point to this deployment and set replicas to 5" --raw | kubectl apply -f -
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_DEPLOYMENT_NAME: ${{ secrets.OPENAI_DEPLOYMENT_NAME }}
+          OPENAI_ENDPOINT: ${{ secrets.OPENAI_ENDPOINT }}
+
+      - name: validate replicas
+        shell: bash
+        run: |
+          set -x
+          REPLICA_COUNT=$(kubectl get deployments nginx-deployment -o jsonpath='{.spec.replicas}')
+          if [[ $REPLICA_COUNT -ne 5 ]]; then
+            echo "replica count is not 5"
+            exit 1
+          fi
+
+      - name: validate service
+        shell: bash
+        run: |
+          set -x
+          SELECTOR_NAME=$(kubectl get svc nginx-svc -o jsonpath='{.spec.selector.app}')
+          if [[ $SELECTOR_NAME != "nginx" ]]; then
+            echo "selector name is not nginx"
+            exit 1
+          fi
