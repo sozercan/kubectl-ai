@@ -119,6 +119,7 @@ func run(args []string) error {
 		s.Stop()
 
 		if *raw {
+			completion = trimTicks(completion)
 			fmt.Println(completion)
 			return nil
 		}
@@ -133,7 +134,6 @@ func run(args []string) error {
 			return err
 		}
 		fmt.Print(out)
-
 		// remove unnessary backticks if they are in the output
 		completion = trimTicks(completion)
 
