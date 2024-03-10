@@ -9,24 +9,24 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-type functionCallType string
+type toolChoiceType string
 
 const (
-	fnCallAuto functionCallType = "auto"
-	fnCallNone functionCallType = "none"
+	toolChoiceAuto toolChoiceType = "auto"
+	toolChoiceNone toolChoiceType = "none"
 )
 
 func (c *oaiClients) openaiGptChatCompletion(ctx context.Context, prompt *strings.Builder, temp float32) (string, error) {
 	var (
-		resp     openai.ChatCompletionResponse
-		req      openai.ChatCompletionRequest
-		funcName *openai.FunctionCall
-		content  string
-		err      error
+		resp    openai.ChatCompletionResponse
+		req     openai.ChatCompletionRequest
+		content string
+		err     error
 	)
 
 	// if we are using the k8s API, we need to call the functions
-	fnCallType := fnCallAuto
+	toolChoiseType := toolChoiceAuto
+
 	for {
 		prompt.WriteString(content)
 		log.Debugf("prompt: %s", prompt.String())
@@ -44,12 +44,17 @@ func (c *oaiClients) openaiGptChatCompletion(ctx context.Context, prompt *string
 		}
 
 		if *usek8sAPI {
-			// TODO: migrate to tools api
-			req.Functions = []openai.FunctionDefinition{ // nolint:staticcheck
-				findSchemaNames,
-				getSchema,
+			req.Tools = []openai.Tool{
+				{
+					Type:     "function",
+					Function: &findSchemaNames,
+				},
+				{
+					Type:     "function",
+					Function: &getSchema,
+				},
 			}
-			req.FunctionCall = fnCallType // nolint:staticcheck
+			req.ToolChoice = toolChoiseType
 		}
 
 		resp, err = c.openAIClient.CreateChatCompletion(ctx, req)
@@ -57,17 +62,18 @@ func (c *oaiClients) openaiGptChatCompletion(ctx context.Context, prompt *string
 			return "", err
 		}
 
-		funcName = resp.Choices[0].Message.FunctionCall
-		// if there is no function call, we are done
-		if funcName == nil {
+		if len(resp.Choices[0].Message.ToolCalls) == 0 {
 			break
 		}
-		log.Debugf("calling function: %s", funcName.Name)
 
-		// if there is a function call, we need to call it and get the result
-		content, err = funcCall(funcName)
-		if err != nil {
-			return "", err
+		for _, tool := range resp.Choices[0].Message.ToolCalls {
+			log.Debugf("calling tool: %s", tool.Function.Name)
+
+			// if there is a tool call, we need to call it and get the result
+			content, err = callTool(tool)
+			if err != nil {
+				return "", err
+			}
 		}
 	}
 
