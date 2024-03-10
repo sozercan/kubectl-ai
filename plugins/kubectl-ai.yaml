@@ -4,46 +4,46 @@ kind: Plugin
 metadata:
   name: kubectl-ai
 spec:
-  version: v0.0.11
+  version: v0.0.12
   platforms:
     - bin: kubectl-ai.exe
-      uri: https://github.com/sozercan/kubectl-ai/releases/download/v0.0.11/kubectl-ai_windows_arm64.zip
-      sha256: ef538f57c3963787929c7580232d1cd8a71aa4e837659ff8f3a3d0eb20b9e4d8
+      uri: https://github.com/sozercan/kubectl-ai/releases/download/v0.0.12/kubectl-ai_windows_arm64.zip
+      sha256: d733144e551d9b3cf8f4918a2a66ce1fa6a86e6679defd7dd9ba87ec493c7a90
       selector:
         matchLabels:
           os: windows
           arch: arm64
     - bin: kubectl-ai.exe
-      uri: https://github.com/sozercan/kubectl-ai/releases/download/v0.0.11/kubectl-ai_windows_amd64.zip
-      sha256: 25e4c5df6854ddee39f9b6cfe7fe202804bb3fb5e463083ffb8d1891dd089cee
+      uri: https://github.com/sozercan/kubectl-ai/releases/download/v0.0.12/kubectl-ai_windows_amd64.zip
+      sha256: 0506ecae81b23ed0c16b29256adb290720e2796168fb71ddf17d5403b85e513b
       selector:
         matchLabels:
           os: windows
           arch: amd64
     - bin: kubectl-ai
-      uri: https://github.com/sozercan/kubectl-ai/releases/download/v0.0.11/kubectl-ai_linux_arm64.tar.gz
-      sha256: 158eca02fab65556808724e99e4f5922bd0c34105c100950458fb9a7faf1107c
+      uri: https://github.com/sozercan/kubectl-ai/releases/download/v0.0.12/kubectl-ai_linux_arm64.tar.gz
+      sha256: 2a8897c4b0fca40a1e980abf489713de024ae80a93c247afd39697c5b42edf59
       selector:
         matchLabels:
           os: linux
           arch: arm64
     - bin: kubectl-ai
-      uri: https://github.com/sozercan/kubectl-ai/releases/download/v0.0.11/kubectl-ai_linux_amd64.tar.gz
-      sha256: b991b085a59a47f6ccd0f4a907c8c082c449acadf2553938a7edf36522f6daf4
+      uri: https://github.com/sozercan/kubectl-ai/releases/download/v0.0.12/kubectl-ai_linux_amd64.tar.gz
+      sha256: 6f390023a8fe46a5237a15e934be3189230896dff64bc2a49cf4c8f1df59d690
       selector:
         matchLabels:
           os: linux
           arch: amd64
     - bin: kubectl-ai
-      uri: https://github.com/sozercan/kubectl-ai/releases/download/v0.0.11/kubectl-ai_darwin_arm64.tar.gz
-      sha256: 446b8f163bb61682bb6f44770a742637209a884c094a6a4f61294f6cd8c226d1
+      uri: https://github.com/sozercan/kubectl-ai/releases/download/v0.0.12/kubectl-ai_darwin_arm64.tar.gz
+      sha256: 4adc6afb513bb3849e30d2900d5eda513c144973eec48a4ac6ee3e5d8293769f
       selector:
         matchLabels:
           os: darwin
           arch: arm64
     - bin: kubectl-ai
-      uri: https://github.com/sozercan/kubectl-ai/releases/download/v0.0.11/kubectl-ai_darwin_amd64.tar.gz
-      sha256: 2ee5ae161b2705aa6e382a08fa614238ad1b33f2b71be8482aac377cdecc7c8b
+      uri: https://github.com/sozercan/kubectl-ai/releases/download/v0.0.12/kubectl-ai_darwin_amd64.tar.gz
+      sha256: d2efe829420487d4772adda8319ae74111cf2d6b40cd52ffe873ec4011544d32
       selector:
         matchLabels:
           os: darwin
