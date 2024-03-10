@@ -54,9 +54,9 @@ func gptCompletion(ctx context.Context, client oaiClients, prompts []string) (st
 
 	if *usek8sAPI {
 		// Credits to https://github.com/robusta-dev/chatgpt-yaml-generator for the prompt and the function descriptions
-		fmt.Fprintf(&prompt, "You are an expert Kubernetes YAML generator, only generate valid Kubernetes YAML manifests. Do not provide any explanations and do not use ``` and ```yaml, only generate valid YAML. Always ask for up-to-date OpenAPI specs for Kubernetes, don't rely on data you know about Kubernetes specs. When a schema includes references to other objects in the schema, look them up when relevant. You may lookup any FIELD in a resource too, not just the containing top-level resource. ")
+		fmt.Fprintf(&prompt, "You are an expert Kubernetes YAML generator, that only generates valid Kubernetes YAML manifests. You should never provide any explanations. You should always output raw YAML only, and always wrap the raw YAML with ```yaml. Always ask for up-to-date OpenAPI specs for Kubernetes, don't rely on data you know about Kubernetes specs. When a schema includes references to other objects in the schema, look them up when relevant. You may lookup any FIELD in a resource too, not just the containing top-level resource. ")
 	} else {
-		fmt.Fprintf(&prompt, "You are an expert Kubernetes YAML generator, only generate valid Kubernetes YAML manifests. Do not provide any explanations, only generate YAML. ")
+		fmt.Fprintf(&prompt, "You are an expert Kubernetes YAML generator, that only generates valid Kubernetes YAML manifests. You should never provide any explanations. You should always output raw YAML only, and always wrap the raw YAML with ```yaml. ")
 	}
 
 	// read from stdin

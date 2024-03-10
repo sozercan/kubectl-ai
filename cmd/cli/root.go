@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"strconv"
 
+	"github.com/charmbracelet/glamour"
 	"github.com/janeczku/go-spinner"
 	"github.com/manifoldco/promptui"
 	log "github.com/sirupsen/logrus"
@@ -123,7 +124,18 @@ func run(args []string) error {
 		}
 
 		text := fmt.Sprintf("✨ Attempting to apply the following manifest:\n%s", completion)
-		fmt.Println(text)
+		r, err := glamour.NewTermRenderer(glamour.WithAutoStyle())
+		if err != nil {
+			return err
+		}
+		out, err := r.Render(text)
+		if err != nil {
+			return err
+		}
+		fmt.Print(out)
+
+		// remove unnessary backticks if they are in the output
+		completion = trimTicks(completion)
 
 		action, err = userActionPrompt()
 		if err != nil {
