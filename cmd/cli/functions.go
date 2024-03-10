@@ -69,17 +69,17 @@ func (s *schema) Run() (content string, err error) {
 	return string(schemaBytes), nil
 }
 
-func funcCall(call *openai.FunctionCall) (string, error) {
-	switch call.Name {
+func callTool(toolCall openai.ToolCall) (string, error) {
+	switch toolCall.Function.Name {
 	case findSchemaNames.Name:
 		var f schemaNames
-		if err := json.Unmarshal([]byte(call.Arguments), &f); err != nil {
+		if err := json.Unmarshal([]byte(toolCall.Function.Arguments), &f); err != nil {
 			return "", err
 		}
 		return f.Run()
 	case getSchema.Name:
 		var f schema
-		if err := json.Unmarshal([]byte(call.Arguments), &f); err != nil {
+		if err := json.Unmarshal([]byte(toolCall.Function.Arguments), &f); err != nil {
 			return "", err
 		}
 		return f.Run()

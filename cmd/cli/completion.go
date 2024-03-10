@@ -12,7 +12,10 @@ import (
 
 	openai "github.com/sashabaranov/go-openai"
 	"github.com/sethvargo/go-retry"
+	log "github.com/sirupsen/logrus"
 )
+
+const maxRetries = 10
 
 type oaiClients struct {
 	openAIClient openai.Client
@@ -72,19 +75,17 @@ func gptCompletion(ctx context.Context, client oaiClients, prompts []string) (st
 
 	var resp string
 	var err error
-	r := retry.WithMaxRetries(10, retry.NewExponential(1*time.Second))
+	r := retry.WithMaxRetries(maxRetries, retry.NewExponential(1*time.Second))
 	if err := retry.Do(ctx, r, func(ctx context.Context) error {
 		resp, err = client.openaiGptChatCompletion(ctx, &prompt, temp)
 
-		requestErr := &openai.RequestError{}
+		requestErr := &openai.APIError{}
 		if errors.As(err, &requestErr) {
 			switch requestErr.HTTPStatusCode {
-			case http.StatusTooManyRequests, http.StatusInternalServerError, http.StatusServiceUnavailable:
+			case http.StatusTooManyRequests, http.StatusRequestTimeout, http.StatusInternalServerError, http.StatusBadGateway, http.StatusServiceUnavailable, http.StatusGatewayTimeout:
+				log.Debugf("retrying due to status code %d: %s", requestErr.HTTPStatusCode, requestErr.Message)
 				return retry.RetryableError(err)
 			}
-		}
-		if err != nil {
-			return err
 		}
 		return nil
 	}); err != nil {
