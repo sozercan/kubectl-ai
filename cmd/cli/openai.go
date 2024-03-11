@@ -84,9 +84,6 @@ func (c *oaiClients) openaiGptChatCompletion(ctx context.Context, prompt *string
 	result := resp.Choices[0].Message.Content
 	log.Debugf("result: %s", result)
 
-	// remove unnessary backticks if they are in the output
-	result = trimTicks(result)
-
 	return result, nil
 }
 
