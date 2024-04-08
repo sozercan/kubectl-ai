@@ -14,6 +14,10 @@ type toolChoiceType string
 const (
 	toolChoiceAuto toolChoiceType = "auto"
 	toolChoiceNone toolChoiceType = "none"
+
+	systemPromptDefault = "You are an expert Kubernetes YAML generator, that only generates valid Kubernetes YAML manifests. You should never provide any explanations. You should always output raw YAML only, and always wrap the raw YAML with ```yaml."
+	// Credits to https://github.com/robusta-dev/chatgpt-yaml-generator for the prompt and the function descriptions
+	systemPromptK8sAPI = "You are an expert Kubernetes YAML generator, that only generates valid Kubernetes YAML manifests. You should never provide any explanations. You should always output raw YAML only, and always wrap the raw YAML with ```yaml. Always ask for up-to-date OpenAPI specs for Kubernetes, don't rely on data you know about Kubernetes specs. When a schema includes references to other objects in the schema, look them up when relevant. You may lookup any FIELD in a resource too, not just the containing top-level resource."
 )
 
 func (c *oaiClients) openaiGptChatCompletion(ctx context.Context, prompt *strings.Builder, temp float32) (string, error) {
@@ -31,9 +35,18 @@ func (c *oaiClients) openaiGptChatCompletion(ctx context.Context, prompt *string
 		prompt.WriteString(content)
 		log.Debugf("prompt: %s", prompt.String())
 
+		systemPrompt := systemPromptDefault
+		if *usek8sAPI {
+			systemPrompt = systemPromptK8sAPI
+		}
+
 		req = openai.ChatCompletionRequest{
 			Model: *openAIDeploymentName,
 			Messages: []openai.ChatCompletionMessage{
+				{
+					Role:    openai.ChatMessageRoleSystem,
+					Content: systemPrompt,
+				},
 				{
 					Role:    openai.ChatMessageRoleUser,
 					Content: prompt.String(),
