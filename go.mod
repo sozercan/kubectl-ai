@@ -2,7 +2,7 @@ module github.com/sozercan/kubectl-ai
 
 go 1.22.0
 
-toolchain go1.22.3
+toolchain go1.22.5
 
 require (
 	github.com/charmbracelet/glamour v0.7.0
