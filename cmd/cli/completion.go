@@ -52,13 +52,6 @@ func gptCompletion(ctx context.Context, client oaiClients, prompts []string) (st
 	temp := float32(*temperature)
 	var prompt strings.Builder
 
-	if *usek8sAPI {
-		// Credits to https://github.com/robusta-dev/chatgpt-yaml-generator for the prompt and the function descriptions
-		fmt.Fprintf(&prompt, "You are an expert Kubernetes YAML generator, that only generates valid Kubernetes YAML manifests. You should never provide any explanations. You should always output raw YAML only, and always wrap the raw YAML with ```yaml. Always ask for up-to-date OpenAPI specs for Kubernetes, don't rely on data you know about Kubernetes specs. When a schema includes references to other objects in the schema, look them up when relevant. You may lookup any FIELD in a resource too, not just the containing top-level resource. ")
-	} else {
-		fmt.Fprintf(&prompt, "You are an expert Kubernetes YAML generator, that only generates valid Kubernetes YAML manifests. You should never provide any explanations. You should always output raw YAML only, and always wrap the raw YAML with ```yaml. ")
-	}
-
 	// read from stdin
 	stat, _ := os.Stdin.Stat()
 	if (stat.Mode() & os.ModeCharDevice) == 0 {
@@ -66,7 +59,7 @@ func gptCompletion(ctx context.Context, client oaiClients, prompts []string) (st
 		if err != nil {
 			return "", err
 		}
-		fmt.Fprintf(&prompt, "\nDepending on the input, either edit or append to the input YAML. Do not generate new YAML without including the input YAML either original or edited.\nUse the following YAML as the input: \n%s\n", string(stdin))
+		fmt.Fprintf(&prompt, "Depending on the input, either edit or append to the input YAML. Do not generate new YAML without including the input YAML either original or edited.\nUse the following YAML as the input: \n%s\n", string(stdin))
 	}
 
 	for _, p := range prompts {
