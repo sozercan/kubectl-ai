@@ -1,3 +1,4 @@
+version: 2
 project_name: kubectl-ai
 release:
   github:
@@ -50,8 +51,8 @@ brews:
     commit_author:
       name: Sertac Ozercan
       email: sozercan@gmail.com
-    description: "kubectl-ai is a kubectl plugin to generate and apply Kubernetes manifests using OpenAI GPT."
-    caveats: "This plugin requires an OpenAI key."
+    description: "kubectl-ai is a kubectl plugin to generate and apply Kubernetes manifests using large language models."
+    caveats: "This plugin requires an OpenAI key or a local OpenAI API compatible server, such as AIKit: https://github.com/sozercan/aikit"
 
 krews:
   - repository:
@@ -67,6 +68,6 @@ krews:
     commit_author:
       name: Sertac Ozercan
       email: sozercan@gmail.com
-    description: "kubectl-ai is a kubectl plugin to generate and apply Kubernetes manifests using OpenAI GPT."
-    short_description: "Generate and apply manifests using OpenAI GPT."
-    caveats: "This plugin requires an OpenAI key."
+    description: "kubectl-ai is a kubectl plugin to generate and apply Kubernetes manifests using large language models."
+    short_description: "Generate and apply manifests using large language models."
+    caveats: "This plugin requires an OpenAI key or a local OpenAI API compatible server, such as AIKit: https://github.com/sozercan/aikit"
