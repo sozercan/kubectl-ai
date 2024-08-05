@@ -41,7 +41,7 @@ kubectl krew install kubectl-ai/kubectl-ai
 
 - [OpenAI API key](https://platform.openai.com/overview)
 - [Azure OpenAI Service](https://aka.ms/azure-openai) API key and endpoint
-- OpenAI API-compatible endpoint (such as [AIKit](https://github.com/sozercan/aikit) or [LocalAI](https://localai.io/))
+- [OpenAI API-compatible endpoint](#set-up-a-local-openai-api-compatible-endpoint) (such as [AIKit](https://github.com/sozercan/aikit) or [LocalAI](https://localai.io/))
 
 For OpenAI, Azure OpenAI or OpenAI API compatible endpoint, you can use the following environment variables:
 
@@ -58,6 +58,19 @@ Azure OpenAI service does not allow certain characters, such as `.`, in the depl
 ```shell
 export AZURE_OPENAI_MAP="gpt-3.5-turbo=my-deployment"
 ```
+
+### Set up a local OpenAI API-compatible endpoint
+
+If you don't have OpenAI API access, you can set up a local OpenAI API-compatible endpoint using [AIKit](https://github.com/sozercan/aikit) on your local machine without any GPUs! For more information, see the [AIKit documentaton](https://sozercan.github.io/aikit/).
+
+```shell
+docker run -d --rm -p 8080:8080 ghcr.io/sozercan/llama3.1:8b
+export OPENAI_ENDPOINT="http://localhost:8080/v1"
+export OPENAI_DEPLOYMENT_NAME="llama-3.1-8b-instruct"
+export OPENAI_API_KEY="n/a"
+```
+
+After setting up the environment like above, you can use `kubectl-ai` as usual.
 
 ### Flags and environment variables
 
