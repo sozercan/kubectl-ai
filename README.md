@@ -47,16 +47,16 @@ For OpenAI, Azure OpenAI or OpenAI API compatible endpoint, you can use the foll
 
 ```shell
 export OPENAI_API_KEY=<your OpenAI key>
-export OPENAI_DEPLOYMENT_NAME=<your OpenAI deployment/model name. defaults to "gpt-3.5-turbo-0301">
+export OPENAI_DEPLOYMENT_NAME=<your OpenAI deployment/model name. defaults to "gpt-4o-mini-2024-07-18">
 export OPENAI_ENDPOINT=<your OpenAI endpoint, like "https://my-aoi-endpoint.openai.azure.com" or "http://localhost:8080/v1">
 ```
 
 If `OPENAI_ENDPOINT` variable is set, then it will use the endpoint. Otherwise, it will use OpenAI API.
 
-Azure OpenAI service does not allow certain characters, such as `.`, in the deployment name. Consequently, `kubectl-ai` will automatically replace `gpt-3.5-turbo` to `gpt-35-turbo` for Azure. However, if you use an Azure OpenAI deployment name completely different from the model name, you can set `AZURE_OPENAI_MAP` environment variable to map the model name to the Azure OpenAI deployment name. For example:
+If you use an Azure OpenAI deployment name completely different from the model name, you can set `AZURE_OPENAI_MAP` environment variable to map the model name to the Azure OpenAI deployment name. For example:
 
 ```shell
-export AZURE_OPENAI_MAP="gpt-3.5-turbo=my-deployment"
+export AZURE_OPENAI_MAP="gpt-4o-mini=my-deployment"
 ```
 
 ### Set up a local OpenAI API-compatible endpoint
@@ -74,7 +74,7 @@ After setting up the environment like above, you can use `kubectl-ai` as usual.
 
 ### Flags and environment variables
 
-- `--require-confirmation` flag or `REQUIRE_CONFIRMATION` environment varible can be set to prompt the user for confirmation before applying the manifest. Defaults to true.
+- `--require-confirmation` flag or `REQUIRE_CONFIRMATION` environment variable can be set to prompt the user for confirmation before applying the manifest. Defaults to true.
 
 - `--temperature` flag or `TEMPERATURE` environment variable can be set between 0 and 1. Higher temperature will result in more creative completions. Lower temperature will result in more deterministic completions. Defaults to 0.
 
