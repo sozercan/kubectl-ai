@@ -21,7 +21,7 @@ type oaiClients struct {
 	openAIClient openai.Client
 }
 
-func newOAIClients() (oaiClients, error) {
+func newOAIClients() oaiClients {
 	var config openai.ClientConfig
 	config = openai.DefaultConfig(*openAIAPIKey)
 
@@ -45,7 +45,7 @@ func newOAIClients() (oaiClients, error) {
 	clients := oaiClients{
 		openAIClient: *openai.NewClientWithConfig(config),
 	}
-	return clients, nil
+	return clients
 }
 
 func gptCompletion(ctx context.Context, client oaiClients, prompts []string) (string, error) {
