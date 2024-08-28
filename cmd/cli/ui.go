@@ -24,6 +24,7 @@ import (
 const listHeight = 14
 
 var (
+	viewDefaultStyle  = lipgloss.NewStyle().Padding(1, 0, 0, 2)
 	titleStyle        = lipgloss.NewStyle().MarginLeft(2)
 	itemStyle         = lipgloss.NewStyle().PaddingLeft(4)
 	selectedItemStyle = lipgloss.NewStyle().PaddingLeft(2).Foreground(lipgloss.Color("170"))
@@ -60,6 +61,8 @@ func (d itemDelegate) Render(w io.Writer, m list.Model, index int, listItem list
 }
 
 type model struct {
+	loading bool
+
 	list         list.Model
 	choice       string
 	spinner      spinner.Model
@@ -146,8 +149,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		}
 	case completionInput:
+		m.loading = true
 		return m, m.startCompletionCmd(msg.content)
 	case completionOutput:
+		m.loading = false
+
 		// update the model with the latest completion
 		m.completion = msg.content
 
@@ -182,12 +188,18 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m model) View() string {
 	s := strings.Builder{}
 
-	s.WriteString("✨ Attempting to apply the following manifest:\n")
+	if m.loading {
+		s.WriteString(m.spinner.View() + "Processing..." + "\n")
+		return s.String()
+	}
 
-	s.WriteString(m.spinner.View() + "Processing..." + "\n")
+	contentView := lipgloss.JoinVertical(
+		lipgloss.Left,
+		viewDefaultStyle.Render("✨ Attempting to apply the following manifest:"),
+		m.renderedYaml+"\n",
+	)
 
-	s.WriteString(m.renderedYaml + "\n")
-
+	s.WriteString(contentView + "\n")
 	s.WriteString(m.list.View())
 
 	// currentContext, err := getCurrentContextName()
@@ -269,6 +281,9 @@ func (m *model) startCompletionCmd(content string) tea.Cmd {
 		if err != nil {
 			return m.handleRequestError(err, content)
 		}
+
+		// trim the opening new line if it exists
+		resp = strings.TrimPrefix(resp, "\n")
 
 		// TODO - do this later, because we need them in the output for glamour to render properly
 		// remove unnecessary backticks if they are in the output
