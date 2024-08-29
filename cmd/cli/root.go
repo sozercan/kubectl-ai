@@ -2,6 +2,7 @@ package cli
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"os"
 	"os/signal"
@@ -39,6 +40,7 @@ func InitAndExecute() {
 	}
 
 	if err := RootCmd().Execute(); err != nil {
+		handleError(err)
 		os.Exit(1)
 	}
 }
@@ -88,9 +90,51 @@ func run(args []string) error {
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer cancel()
 
-	if _, err := tea.NewProgram(newModel(args), tea.WithContext(ctx)).Run(); err != nil {
-		return err
+	var k8sContext string
+	currentContext, err := getCurrentContextName()
+	if err == nil {
+		log.Debugf("current-context: %s", currentContext)
+		k8sContext = currentContext
+	}
+
+	p := tea.NewProgram(newModel(args, k8sContext, !*requireConfirmation), tea.WithContext(ctx))
+	m, err := p.Run()
+	if err != nil {
+		return uiError{err, "Couldn't start Bubble Tea program."}
+	}
+
+	model, ok := m.(model)
+	if !ok {
+		return fmt.Errorf("unexpected model type %T", m)
+	} else if model.error != nil {
+		return *model.error
+	}
+
+	// Create a manifest from the last completion
+	manifest := trimTicks(model.completion)
+
+	if model.state == apply || model.state == autoApply {
+		return applyManifest(manifest)
 	}
 
 	return nil
+}
+
+func handleError(err error) {
+	format := "\n%s\n\n"
+
+	var args []interface{}
+	var merr uiError
+
+	if errors.As(err, &merr) {
+		args = []interface{}{
+			stderrStyles().ErrPadding.Render(stderrStyles().ErrorHeader.String(), merr.reason),
+		}
+	} else {
+		args = []interface{}{
+			stderrStyles().ErrPadding.Render(stderrStyles().ErrorDetails.Render(err.Error())),
+		}
+	}
+
+	fmt.Fprintf(os.Stderr, format, args...)
 }
