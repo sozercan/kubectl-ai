@@ -74,7 +74,7 @@ After setting up the environment like above, you can use `kubectl-ai` as usual.
 
 ### Flags and environment variables
 
-- `--require-confirmation` flag or `REQUIRE_CONFIRMATION` environment varible can be set to prompt the user for confirmation before applying the manifest. Defaults to true.
+- `--require-confirmation` flag or `REQUIRE_CONFIRMATION` environment variable can be set to prompt the user for confirmation before applying the manifest. Defaults to true.
 
 - `--temperature` flag or `TEMPERATURE` environment variable can be set between 0 and 1. Higher temperature will result in more creative completions. Lower temperature will result in more deterministic completions. Defaults to 0.
 
