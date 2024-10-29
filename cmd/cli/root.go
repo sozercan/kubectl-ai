@@ -2,25 +2,18 @@ package cli
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"os"
 	"os/signal"
 	"strconv"
 
-	"github.com/charmbracelet/glamour"
-	"github.com/janeczku/go-spinner"
-	"github.com/manifoldco/promptui"
+	tea "github.com/charmbracelet/bubbletea"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 	"github.com/walles/env"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
-)
-
-const (
-	apply     = "Apply"
-	dontApply = "Don't Apply"
-	reprompt  = "Reprompt"
 )
 
 var (
@@ -47,6 +40,7 @@ func InitAndExecute() {
 	}
 
 	if err := RootCmd().Execute(); err != nil {
+		handleError(err)
 		os.Exit(1)
 	}
 }
@@ -96,90 +90,51 @@ func run(args []string) error {
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer cancel()
 
-	oaiClients, err := newOAIClients()
+	var k8sContext string
+	currentContext, err := getCurrentContextName()
+	if err == nil {
+		log.Debugf("current-context: %s", currentContext)
+		k8sContext = currentContext
+	}
+
+	p := tea.NewProgram(newModel(args, k8sContext, !*requireConfirmation), tea.WithContext(ctx))
+	m, err := p.Run()
 	if err != nil {
-		return err
+		return uiError{err, "Couldn't start Bubble Tea program."}
 	}
 
-	var action, completion string
-	for action != apply {
-		args = append(args, action)
-
-		s := spinner.NewSpinner("Processing...")
-		if !*debug && !*raw {
-			s.SetCharset([]string{"⣾", "⣽", "⣻", "⢿", "⡿", "⣟", "⣯", "⣷"})
-			s.Start()
-		}
-
-		completion, err = gptCompletion(ctx, oaiClients, args)
-		if err != nil {
-			return err
-		}
-
-		s.Stop()
-
-		if *raw {
-			completion = trimTicks(completion)
-			fmt.Println(completion)
-			return nil
-		}
-
-		text := fmt.Sprintf("✨ Attempting to apply the following manifest:\n%s", completion)
-		r, err := glamour.NewTermRenderer(glamour.WithAutoStyle())
-		if err != nil {
-			return err
-		}
-		out, err := r.Render(text)
-		if err != nil {
-			return err
-		}
-		fmt.Print(out)
-		// remove unnessary backticks if they are in the output
-		completion = trimTicks(completion)
-
-		action, err = userActionPrompt()
-		if err != nil {
-			return err
-		}
-
-		if action == dontApply {
-			return nil
-		}
+	model, ok := m.(model)
+	if !ok {
+		return fmt.Errorf("unexpected model type %T", m)
+	} else if model.error != nil {
+		return *model.error
 	}
 
-	return applyManifest(completion)
+	// Create a manifest from the last completion
+	manifest := trimTicks(model.completion)
+
+	if model.state == apply || model.state == autoApply {
+		return applyManifest(manifest)
+	}
+
+	return nil
 }
 
-func userActionPrompt() (string, error) {
-	// if require confirmation is not set, immediately return apply
-	if !*requireConfirmation {
-		return apply, nil
-	}
+func handleError(err error) {
+	format := "\n%s\n\n"
 
-	var result string
-	var err error
-	items := []string{apply, dontApply}
-	currentContext, err := getCurrentContextName()
-	label := fmt.Sprintf("Would you like to apply this? [%[1]s/%[2]s/%[3]s]", reprompt, apply, dontApply)
-	if err == nil {
-		label = fmt.Sprintf("(context: %[1]s) %[2]s", currentContext, label)
-	}
+	var args []interface{}
+	var merr uiError
 
-	prompt := promptui.SelectWithAdd{
-		Label:    label,
-		Items:    items,
-		AddLabel: reprompt,
-	}
-	_, result, err = prompt.Run()
-	if err != nil {
-		// workaround for bug in promptui when input is piped in from stdin
-		// however, this will not block for ui input
-		// for now, we will not apply the yaml, but user can pipe to input to kubectl
-		if err.Error() == "^D" {
-			return dontApply, nil
+	if errors.As(err, &merr) {
+		args = []interface{}{
+			stderrStyles().ErrPadding.Render(stderrStyles().ErrorHeader.String(), merr.reason),
 		}
-		return dontApply, err
+	} else {
+		args = []interface{}{
+			stderrStyles().ErrPadding.Render(stderrStyles().ErrorDetails.Render(err.Error())),
+		}
 	}
 
-	return result, nil
+	fmt.Fprintf(os.Stderr, format, args...)
 }
